@@ -1,35 +1,21 @@
 # de-match-proj
 
-Base **Next.js (App Router) + Supabase Auth**: login em `/login`, área protegida em `/`.
+Projeto de sistema de canil (login, perfis, cadastro de animal). Stack: Next.js + Supabase.
 
-## Requisitos
+## Passos para rodar o projeto
 
-- **Node.js** `>= 20.19.0` (evita aviso de engine do ESLint e mantém alinhado com o ecossistema Next 16). Há um `.nvmrc` com `20.19.0` para quem usa nvm.
-
-## Configuração
-
-1. Copie as variáveis do seu projeto Supabase para `.env.local` (veja `.env.example`):
-
+1. **`npm install`**
+2. Criar **`.env`** na raiz (copia do `.env.example`) e **colocar as infos** do Supabase:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` — só se for usar o painel de **criar usuário** (`/admin/usuarios`); pega em *Project Settings → API → service_role*
+3. No Supabase (**SQL Editor**), montar o banco na ordem: **`limpar banco.sql`** e em seguida **`schemaBD.sql`** (ambos em `supabase/sql bd`). Só faz o passo do limpar se você quiser zerar o modelo; se for banco novo, pode ir direto no `schemaBD.sql` se já estiver vazio.
+4. **`npm run dev`** e abrir o que o terminal mostrar (geralmente [http://localhost:3000](http://localhost:3000)).
 
-2. No painel do Supabase, configure e-mail/senha conforme o fluxo que você quer (confirmação de e-mail, etc.).
+## Coisas úteis
 
-## Scripts
+- Primeiro **admin** da conta: dá pra subir com `UPDATE` na tabela `perfil` (tem exemplo nos `.sql` da pasta do banco).
+- Se der erro ao mudar `perfil_acesso` no SQL Editor, roda o script **`corrigir_trigger_primeiro_admin.sql`**.
+- Voluntário precisa da policy certa pra cadastrar animal: **`atualizar_rls_animal_voluntario.sql`** se o banco foi criado antes dessa mudança.
 
-```bash
-npm install
-npm run dev
-npm run build
-npm run lint
-```
-
-Abra [http://localhost:3000](http://localhost:3000) (ou a porta indicada no terminal).
-
-## Estrutura útil
-
-- `src/app/login/page.js` — entrar / criar conta
-- `src/app/page.js` — home protegida (redireciona se não houver sessão)
-- `src/proxy.js` + `src/utils/supabase/*` — sessão Supabase (convenção **Proxy** do Next 16)
-
-`next.config.mjs` define `turbopack.root` na pasta do projeto para evitar confusão quando existir outro `package-lock.json` acima (ex.: na pasta do usuário).
+Qualquer dúvida, mexe no `.env` e confere se o banco tá igual ao `schemaBD.sql`.

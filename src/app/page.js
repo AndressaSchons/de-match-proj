@@ -1,6 +1,8 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signOutAction } from "./actions";
 import { createClient } from "@/utils/supabase/server";
+import { podeCadastrarAnimal } from "@/lib/animal-constants";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -12,14 +14,29 @@ export default async function HomePage() {
     redirect("/login");
   }
 
+  const { data: perfil } = await supabase
+    .from("perfil")
+    .select("perfil_acesso")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  const podeAnimal = podeCadastrarAnimal(perfil?.perfil_acesso);
+
   return (
     <main style={{ maxWidth: 720, margin: "2rem auto", padding: "1rem" }}>
-      <h1>Projeto com Next.js + Supabase</h1>
+      <h1>Sistema de gerenciamento de canil</h1>
       <p style={{ marginTop: "0.5rem" }}>
-        Sessão ativa com o usuário: <strong>{user.email}</strong>
+        Sessão: <strong>{user.email}</strong>
       </p>
-      <p style={{ marginTop: "0.5rem", color: "#666" }}>
-        Esta base já está pronta para login, logout e proteção de rota.
+
+      {podeAnimal ? (
+        <p style={{ marginTop: "1rem" }}>
+          <Link href="/animais/cadastro">Cadastrar novo animal →</Link>
+        </p>
+      ) : null}
+
+      <p style={{ marginTop: "1rem" }}>
+        <Link href="/conta">Conta →</Link>
       </p>
 
       <form action={signOutAction} style={{ marginTop: "1.5rem" }}>

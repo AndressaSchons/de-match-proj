@@ -13,7 +13,14 @@ export async function createClient() {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
+          } catch {
+            // Em Server Components o Next não permite gravar cookies; o proxy renova a sessão.
+            // Ver: https://nextjs.org/docs/app/api-reference/functions/cookies
+          }
         },
       },
     }
