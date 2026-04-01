@@ -1,0 +1,126 @@
+.page {
+  min-height: calc(100vh - 52px); /* descontando o AppNav */
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+/* ── Body layout ── */
+.body {
+  display: flex;
+  flex: 1;
+  gap: 1.2rem;
+  padding: var(--gap-xl);
+  align-items: flex-start;
+}
+
+/* ── Left panel ── */
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.panelBox {
+  background: var(--color-green);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.metricsBox {
+  min-height: 120px;
+}
+
+.panelTitle {
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* ── Center panel ── */
+.centerPanel {
+  flex: 1;
+  background: var(--color-mint);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  box-shadow: var(--shadow-card);
+  min-height: 400px;
+}
+
+.centerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.centerTitle {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--color-text);
+}
+
+.verTodos {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+/* ── Animal list ── */
+.animalList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.empty {
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* ── Right sidebar ── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.sideBtn {
+  border-radius: var(--radius-md);
+  border: none;
+  padding: 0.8rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-sm);
+  text-decoration: none;
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.sideBtnLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  white-space: pre-line;
+}
+
+.sideIcon {
+  font-size: 1.5rem;
+}
+
+.sideBtnGold  { background: var(--color-gold);  }
+.sideBtnGreen { background: var(--color-green); }

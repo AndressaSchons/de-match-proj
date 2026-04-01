@@ -1,0 +1,122 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+}
+
+/* ── Card ── */
+.card {
+  background: var(--color-mint);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem 2rem;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-md);
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+/* ── Logo ── */
+.logoWrap {
+  margin-top: -10px;
+  margin-bottom: 0.8rem;
+  background: var(--color-mint);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-logo);
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 480px) {
+  .logoWrap {
+    margin-top: 8px;
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ── Inner form ── */
+.innerForm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+/* ── Fields ── */
+.field {
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-weight: 700;
+  color: var(--color-green-dark);
+  margin-bottom: 4px;
+  font-size: var(--font-size-base);
+}
+
+/* inputs inherit globals.css defaults */
+
+/* ── Buttons ── */
+.btnPrimary {
+  margin-top: var(--gap-md);
+  width: 65%;
+  padding: var(--btn-padding);
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--color-pink);
+  color: var(--color-white);
+  font-weight: var(--btn-font-weight);
+  font-size: var(--btn-font-size);
+  letter-spacing: var(--btn-letter-spacing);
+}
+
+.btnLink {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  margin-top: 2px;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* ── Hint text ── */
+.hint {
+  font-size: var(--font-size-sm);
+  color: #444;
+  text-align: center;
+  margin-bottom: 0.2rem;
+}
+
+/* ── Feedback message ── */
+.message {
+  margin-top: var(--gap-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  text-align: center;
+}
+
+/* ── Footer ── */
+.footer {
+  margin-top: 2rem;
+  color: var(--color-muted);
+  font-size: var(--font-size-footer);
+}

@@ -3,97 +3,128 @@
 import { useActionState, useEffect, useRef } from "react";
 import { DISPONIBILIDADE } from "@/lib/animal-constants";
 import { cadastrarAnimal } from "./actions";
+import { SidebarActions } from "@/components/SidebarActions";
+import styles from "./cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
+/* ═══════════════════════════════════════════════════════ */
 export function CadastroAnimalForm() {
   const [state, formAction, pending] = useActionState(cadastrarAnimal, initialState);
   const formRef = useRef(null);
 
   useEffect(() => {
-    if (state?.ok) {
-      formRef.current?.reset();
-    }
+    if (state?.ok) formRef.current?.reset();
   }, [state?.ok]);
 
   return (
-    <form
-      ref={formRef}
-      action={formAction}
-      style={{ marginTop: "1rem", display: "grid", gap: "1rem", maxWidth: 520 }}
-    >
-      <p style={{ margin: 0, fontSize: "0.9rem", color: "#64748b" }}>
-        Campos marcados com <strong aria-hidden="true">*</strong> são obrigatórios (validação do fluxo de
-        cadastro).
-      </p>
+    <div className={styles.page}>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>
-          Nome do animal <strong aria-label="obrigatório">*</strong>
-        </span>
-        <input name="nome_animal" type="text" required minLength={1} autoComplete="off" placeholder="Ex.: Thor" />
-      </label>
+      {/* ── Header ── */}
+      <header className={styles.header}>
+        <span>Cadastro Pet</span>
+        <div className={styles.headerIcons}>
+          <button className={styles.headerIcon} title="Início">🏠</button>
+          <button className={styles.headerIcon} title="Perfil">👤</button>
+          <button className={styles.headerIcon} title="Sair">🚪</button>
+        </div>
+      </header>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>
-          Disponibilidade <strong aria-label="obrigatório">*</strong>
-        </span>
-        <select name="disponibilidade" required defaultValue="">
-          <option value="" disabled>
-            Selecione…
-          </option>
-          {DISPONIBILIDADE.map((op) => (
-            <option key={op.value} value={op.value}>
-              {op.label}
-            </option>
-          ))}
-        </select>
-      </label>
+      {/* ── Body ── */}
+      <div className={styles.body}>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>Raça</span>
-        <input name="raca" type="text" placeholder="Opcional" />
-      </label>
+        {/* ── Form card ── */}
+        <form ref={formRef} action={formAction} className={styles.card}>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>Localização</span>
-        <input name="localizacao" type="text" placeholder="Onde está abrigado (opcional)" />
-      </label>
+          {/* Nome + Foto */}
+          <div className={styles.row}>
+            <span className={styles.label}>Nome:</span>
+            <input name="nome_animal" type="text" required autoComplete="off" className={styles.inputShort} />
+            <div className={styles.spacer} />
+            <button type="button" className={styles.btnPhoto}>Carregar foto…</button>
+          </div>
 
-      <label style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-        <input name="castrado" type="checkbox" value="on" />
-        <span>Castrado</span>
-      </label>
+          {/* Sexo + Porte */}
+          <div className={styles.row}>
+            <span className={styles.label}>Sexo:</span>
+            <div className={styles.radioGroup}>
+              <label className={styles.radioLabel}>
+                <input type="radio" name="sexo" value="femea" /> Fêmea
+              </label>
+              <label className={styles.radioLabel}>
+                <input type="radio" name="sexo" value="macho" /> Macho
+              </label>
+            </div>
+            <span className={`${styles.label} ${styles.labelRight}`}>Porte:</span>
+            <select name="porte" defaultValue="">
+              <option value="" disabled />
+              <option value="pequeno">Pequeno</option>
+              <option value="medio">Médio</option>
+              <option value="grande">Grande</option>
+            </select>
+          </div>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>Vacinação</span>
-        <input name="vacinacao" type="text" placeholder="Ex.: em dia, pendente (opcional)" />
-      </label>
+          {/* Castração + Situação */}
+          <div className={styles.row}>
+            <span className={styles.label}>Castração:</span>
+            <select name="castrado" defaultValue="">
+              <option value="" disabled />
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+              <option value="desconhecido">Desconhecido</option>
+            </select>
+            <span className={`${styles.label} ${styles.labelRight}`}>Situação:</span>
+            <select name="disponibilidade" required defaultValue="">
+              <option value="" disabled />
+              {DISPONIBILIDADE.map((op) => (
+                <option key={op.value} value={op.value}>{op.label}</option>
+              ))}
+            </select>
+          </div>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>História / descrição</span>
-        <textarea name="descricao_historia" rows={3} placeholder="Opcional" />
-      </label>
+          {/* Data nascimento + Cor/Raça */}
+          <div className={styles.row}>
+            <span className={styles.label}>Data de Nascimento:</span>
+            <input name="data_nascimento" type="date" className={styles.inputShort} />
+            <span className={`${styles.label} ${styles.labelRight}`}>Cor/Raça:</span>
+            <input name="raca" type="text" className={styles.inputMid} />
+          </div>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>URL da foto</span>
-        <input name="foto" type="text" placeholder="Link da foto (opcional)" />
-      </label>
+          {/* História */}
+          <div>
+            <p className={styles.sectionLabel}>História:</p>
+            <textarea name="descricao_historia" rows={4} />
+          </div>
 
-      <label style={{ display: "grid", gap: "0.35rem" }}>
-        <span>Observações</span>
-        <textarea name="observacoes" rows={2} placeholder="Opcional" />
-      </label>
+          {/* Observações */}
+          <div>
+            <p className={styles.sectionLabel}>Observações</p>
+            <textarea name="observacoes" rows={2} />
+          </div>
 
-      <button type="submit" disabled={pending} style={{ padding: "0.65rem 1rem", cursor: "pointer" }}>
-        {pending ? "Salvando…" : "Cadastrar animal"}
-      </button>
+          {/* Actions */}
+          <div className={styles.actions}>
+            <button
+              type="submit"
+              disabled={pending}
+              className={styles.btnSave}
+              style={{ opacity: pending ? 0.75 : 1 }}
+            >
+              {pending ? "Salvando…" : "Salvar"}
+            </button>
+            <button type="reset" className={styles.btnCancel}>Cancelar</button>
+          </div>
 
-      {state?.message ? (
-        <p style={{ margin: 0, color: state.ok ? "#15803d" : "#b91c1c" }} role="status">
-          {state.message}
-        </p>
-      ) : null}
-    </form>
+          {state?.message && (
+            <p className={state.ok ? styles.msgOk : styles.msgError} role="status">
+              {state.message}
+            </p>
+          )}
+        </form>
+
+        {/* ── Sidebar ── */}
+        <SidebarActions active="/animais/cadastro" />
+      </div>
+    </div>
   );
 }
