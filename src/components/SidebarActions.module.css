@@ -26,9 +26,10 @@
 }
 
 .btn.active {
-  filter: brightness(0.88);
-  outline: 3px solid rgba(255, 255, 255, 0.5);
+  background: var(--color-gold) !important;
+  outline: 3px solid rgba(255, 255, 255, 0.4);
   outline-offset: -3px;
+  transform: translateY(-1px);
 }
 
 .gold  { background: var(--color-gold);  }

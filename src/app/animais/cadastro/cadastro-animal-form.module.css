@@ -1,0 +1,154 @@
+.page {
+  min-height: calc(100vh - 52px); /* desconta AppNav */
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+/* ── Layout ── */
+.body {
+  display: flex;
+  flex: 1;
+  gap: 1.2rem;
+  padding: var(--gap-xl);
+  align-items: flex-start;
+}
+
+/* ── Card ── */
+.card {
+  flex: 1;
+  background: var(--color-mint);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2.4rem 2.4rem;
+  display: grid;
+  gap: var(--gap-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Rows ── */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-lg);
+  flex-wrap: wrap;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  white-space: nowrap;
+}
+
+.labelRight {
+  margin-left: auto;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* inputs inherit globals.css — override width where needed */
+.inputShort {
+  max-width: 320px;
+  flex: 1;
+}
+
+.inputMid {
+  max-width: 180px;
+  flex: 1;
+}
+
+/* selects in rows — don't stretch full width */
+.row select {
+  width: auto;
+  min-width: 140px;
+  border-radius: var(--radius-sm);
+}
+
+.sectionLabel {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  margin-bottom: 0.4rem;
+}
+
+/* ── Radio ── */
+.radioGroup {
+  display: flex;
+  gap: var(--gap-lg);
+  align-items: center;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+}
+
+.radioLabel input[type="radio"] {
+  width: auto;
+  accent-color: var(--color-green-dark);
+  cursor: pointer;
+}
+
+/* ── Photo button ── */
+.btnPhoto {
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-green-dark);
+  background: var(--color-green-dark);
+  color: var(--color-white);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.btnPhoto:hover {
+  opacity: 0.85;
+}
+
+/* ── Action buttons ── */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gap-md);
+  margin-top: 0.4rem;
+}
+
+.btnSave {
+  padding: 9px 28px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--color-pink);
+  color: var(--color-white);
+  font-weight: var(--btn-font-weight);
+  font-size: var(--font-size-base);
+  letter-spacing: var(--btn-letter-spacing);
+}
+
+.btnCancel {
+  padding: 9px 28px;
+  border-radius: var(--radius-pill);
+  border: var(--input-border);
+  background: var(--color-white);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+/* ── Messages ── */
+.msgOk {
+  font-size: var(--font-size-sm);
+  color: #15803d;
+  text-align: right;
+}
+
+.msgError {
+  font-size: var(--font-size-sm);
+  color: #b91c1c;
+  text-align: right;
+}

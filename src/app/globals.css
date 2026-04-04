@@ -19,17 +19,18 @@
   --foreground:        #171717;
 
   /* ── Typography ── */
-  --font-family: var(--font-geist-sans), 'Segoe UI', Arial, Helvetica, sans-serif;  --font-size-sm:      0.82rem;
-  --font-size-base:    0.95rem;
-  --font-size-md:      1rem;
-  --font-size-footer:  0.78rem;
+  --font-family:      var(--font-geist-sans), 'Segoe UI', Arial, Helvetica, sans-serif;
   --font-family-mono: var(--font-geist-mono), monospace;
+  --font-size-sm:     0.82rem;
+  --font-size-base:   0.95rem;
+  --font-size-md:     1rem;
+  --font-size-footer: 0.78rem;
 
   /* ── Spacing ── */
-  --gap-sm:    0.5rem;
-  --gap-md:    0.7rem;
-  --gap-lg:    1rem;
-  --gap-xl:    1.5rem;
+  --gap-sm:  0.5rem;
+  --gap-md:  0.7rem;
+  --gap-lg:  1rem;
+  --gap-xl:  1.5rem;
 
   /* ── Radius ── */
   --radius-sm:   6px;
@@ -39,21 +40,37 @@
   --radius-full: 9999px;
 
   /* ── Shadows ── */
-  --shadow-card:  0 4px 20px rgba(0, 0, 0, 0.1);
-  --shadow-logo:  0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --shadow-logo: 0 2px 8px rgba(0, 0, 0, 0.12);
 
   /* ── Inputs ── */
-  --input-padding:     10px 16px;
-  --input-bg:          var(--color-white);
-  --input-border:      1px solid var(--color-border);
-  --input-radius:      var(--radius-pill);
-  --input-font-size:   var(--font-size-base);
+  --input-padding:    10px 16px;
+  --input-bg:         var(--color-white);
+  --input-border:     1px solid var(--color-border);
+  --input-radius:     var(--radius-pill);
+  --input-font-size:  var(--font-size-base);
 
   /* ── Buttons ── */
-  --btn-padding:       11px 0;
-  --btn-font-size:     var(--font-size-md);
-  --btn-font-weight:   700;
+  --btn-padding:        11px 0;
+  --btn-font-size:      var(--font-size-md);
+  --btn-font-weight:    700;
   --btn-letter-spacing: 1px;
+
+  /* ── Page layout — padrão de todas as telas internas ── */
+  --page-min-height:  calc(100vh - 52px); /* desconta AppNav */
+  --page-padding:     var(--gap-xl);
+  --page-gap:         1.2rem;
+
+  /* ── AppNav ── */
+  --nav-height: 52px;
+
+  /* ── Cards de conteúdo (mint) ── */
+  --card-padding:    1.4rem 1.6rem;
+  --card-padding-lg: 2rem 2.4rem 2.4rem;
+
+  /* ── Feedback colors ── */
+  --color-success: #15803d;
+  --color-error:   #b91c1c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -106,7 +123,7 @@ textarea {
   outline: none;
   width: 100%;
   box-sizing: border-box;
-  color: var(--color-text); /* ← adicione essa linha */
+  color: var(--color-text);
 }
 
 input:not([type="radio"]):not([type="checkbox"]),
@@ -125,6 +142,35 @@ textarea {
 button {
   font-family: var(--font-family);
   cursor: pointer;
+}
+
+/* ── Shared page layout ── */
+.pageLayout {
+  min-height: var(--page-min-height);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.pageBody {
+  display: flex;
+  flex: 1;
+  gap: var(--page-gap);
+  padding: var(--page-padding);
+  align-items: flex-start;
+}
+
+/* ── Shared feedback messages ── */
+.msgOk {
+  font-size: var(--font-size-sm);
+  color: var(--color-success);
+  text-align: right;
+}
+
+.msgError {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  text-align: right;
 }
 
 @media (prefers-color-scheme: dark) {

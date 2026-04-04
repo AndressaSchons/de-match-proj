@@ -1,0 +1,110 @@
+.page {
+  min-height: var(--page-min-height);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+/* ── Body layout ── */
+.body {
+  display: flex;
+  flex: 1;
+  gap: var(--page-gap);
+  padding: var(--page-padding);
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* ── Center — empurra o card para o meio ── */
+.center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 2rem;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--color-mint);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2.4rem 2rem;
+  width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Rows (label + input na mesma linha) ── */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-lg);
+}
+
+.label {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  white-space: nowrap;
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border-radius: var(--radius-pill);
+}
+
+/* ── Field stack (label em cima, select embaixo) ── */
+.fieldStack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.select {
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.4rem;
+}
+
+.btnCancel {
+  padding: 9px 28px;
+  border-radius: var(--radius-pill);
+  border: var(--input-border);
+  background: var(--color-white);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+.btnSave {
+  padding: 9px 28px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--color-pink);
+  color: var(--color-white);
+  font-weight: var(--btn-font-weight);
+  font-size: var(--font-size-base);
+  letter-spacing: var(--btn-letter-spacing);
+}
+
+/* ── Feedback ── */
+.msgOk {
+  font-size: var(--font-size-sm);
+  color: var(--color-success);
+}
+
+.msgError {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}

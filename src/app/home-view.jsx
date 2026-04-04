@@ -15,7 +15,7 @@ export default function HomeView({ animais, podeAnimal }) {
         <aside className={styles.leftPanel}>
           <div className={styles.panelBox}>
             <h2 className={styles.panelTitle}>Notificações</h2>
-          <NotificationCard tipo="animal" mensagem="Novo animal cadastrado." />
+            <NotificationCard tipo="animal" mensagem="Novo animal cadastrado." />
             <NotificationCard tipo="alerta" mensagem="Animal precisando de informações" />
           </div>
 
@@ -40,8 +40,8 @@ export default function HomeView({ animais, podeAnimal }) {
           </div>
         </main>
 
-        {/* ── Direita: Ações ── */}
-        <SidebarActions active="/" podeAnimal={podeAnimal} />
+        {/* ── Direita: Ações — sem active, nenhum botão destacado ── */}
+        <SidebarActions podeAnimal={podeAnimal} />
       </div>
     </div>
   );

@@ -1,0 +1,195 @@
+.page {
+  min-height: calc(100vh - 52px);
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+/* ── Body layout ── */
+.body {
+  display: flex;
+  flex: 1;
+  gap: 1.2rem;
+  padding: var(--gap-xl);
+  align-items: flex-start;
+}
+
+/* ══════════════════════════════════════
+   Left panel — Filtros
+══════════════════════════════════════ */
+.leftPanel {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.filterBox {
+  background: var(--color-green);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.filterTitle {
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.filterBadges {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+/* filter toggle buttons */
+.filterBtn {
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 5px 14px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: opacity 0.15s;
+  width: fit-content;
+}
+
+.filterInactive {
+  opacity: 0.45;
+}
+
+.filterActive {
+  opacity: 1;
+}
+
+/* search */
+.searchWrap {
+  display: flex;
+  align-items: center;
+  background: var(--color-white);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  gap: var(--gap-sm);
+  margin-top: 0.2rem;
+}
+
+.searchIcon {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--font-size-base);
+  width: 100%;
+  padding: 0;
+  border-radius: 0;
+  color: var(--color-text);
+}
+
+/* ══════════════════════════════════════
+   Center panel — Lista
+══════════════════════════════════════ */
+.centerPanel {
+  flex: 1;
+  background: var(--color-mint);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  box-shadow: var(--shadow-card);
+  min-height: 400px;
+}
+
+.centerTitle {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.empty {
+  font-size: var(--font-size-base);
+  color: var(--color-muted);
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* ── User row ── */
+.row {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+.rowIcon {
+  font-size: 1.4rem;
+  color: var(--color-green-dark);
+  flex-shrink: 0;
+}
+
+.rowName {
+  flex: 1;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  color: var(--color-text);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
+}
+
+.actionBtn:hover {
+  color: var(--color-green);
+}
+
+/* ══════════════════════════════════════
+   Badges
+══════════════════════════════════════ */
+.badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* match colors from image */
+.badgeVoluntario    { background: #e0e0e0; color: var(--color-text); }
+.badgeAdministrador { background: var(--color-pink);   color: var(--color-white); }
+.badgeValidador     { background: var(--color-gold);   color: var(--color-white); }

@@ -1,5 +1,5 @@
 .page {
-  min-height: calc(100vh - 52px); /* descontando o AppNav */
+  min-height: calc(100vh - 52px);
   display: flex;
   flex-direction: column;
   background: var(--color-bg);
@@ -87,40 +87,3 @@
   text-align: center;
   margin-top: 2rem;
 }
-
-/* ── Right sidebar ── */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap-md);
-  width: 110px;
-  flex-shrink: 0;
-}
-
-.sideBtn {
-  border-radius: var(--radius-md);
-  border: none;
-  padding: 0.8rem 0.4rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--gap-sm);
-  text-decoration: none;
-  color: var(--color-white);
-  cursor: pointer;
-}
-
-.sideBtnLabel {
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-align: center;
-  line-height: 1.2;
-  white-space: pre-line;
-}
-
-.sideIcon {
-  font-size: 1.5rem;
-}
-
-.sideBtnGold  { background: var(--color-gold);  }
-.sideBtnGreen { background: var(--color-green); }

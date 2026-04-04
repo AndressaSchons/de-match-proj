@@ -19,18 +19,6 @@ export function CadastroAnimalForm() {
 
   return (
     <div className={styles.page}>
-
-      {/* ── Header ── */}
-      <header className={styles.header}>
-        <span>Cadastro Pet</span>
-        <div className={styles.headerIcons}>
-          <button className={styles.headerIcon} title="Início">🏠</button>
-          <button className={styles.headerIcon} title="Perfil">👤</button>
-          <button className={styles.headerIcon} title="Sair">🚪</button>
-        </div>
-      </header>
-
-      {/* ── Body ── */}
       <div className={styles.body}>
 
         {/* ── Form card ── */}
