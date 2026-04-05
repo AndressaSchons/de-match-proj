@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { listarUsuarios } from "./actions";
 import UsuariosView from "./usuarios-view";
 
 export const metadata = {
@@ -12,10 +13,7 @@ export default async function UsuariosPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: usuarios } = await supabase
-    .from("perfil")
-    .select("id, nome, email, perfil_acesso")
-    .order("nome", { ascending: true });
+  const { usuarios } = await listarUsuarios();
 
-  return <UsuariosView usuarios={usuarios ?? []} />;
+  return <UsuariosView usuarios={usuarios} />;
 }

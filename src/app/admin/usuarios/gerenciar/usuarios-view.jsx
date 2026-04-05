@@ -27,15 +27,17 @@ function UsuarioRow({ usuario }) {
   return (
     <div className={styles.row}>
       <FaCircleUser className={styles.rowIcon} />
-      <span className={styles.rowName}>{usuario.nome ?? usuario.email}</span>
-      <PerfilBadge perfil={usuario.perfil_acesso} />
-      <div className={styles.rowActions}>
-        <Link href={`/admin/usuarios/${usuario.id}`} className={styles.actionBtn} title="Visualizar">
-          <FaEye />
-        </Link>
-        <Link href={`/admin/usuarios/${usuario.id}/editar`} className={styles.actionBtn} title="Editar">
-          <FaPen />
-        </Link>
+      <span className={styles.rowName}>{usuario.nome ?? "—"}</span>
+      <div className={styles.rowRight}>
+        <PerfilBadge perfil={usuario.perfil_acesso} />
+        <div className={styles.rowActions}>
+          <Link href={`/admin/usuarios/${usuario.id}`} className={styles.actionBtn} title="Visualizar">
+            <FaEye />
+          </Link>
+          <Link href={`/admin/usuarios/${usuario.id}/editar`} className={styles.actionBtn} title="Editar">
+            <FaPen />
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -58,7 +60,8 @@ export default function UsuariosView({ usuarios }) {
     return usuarios.filter((u) => {
       const matchFiltro = filtrosAtivos.length === 0 || filtrosAtivos.includes(u.perfil_acesso);
       const matchBusca  = busca.trim() === "" ||
-        (u.nome ?? u.email ?? "").toLowerCase().includes(busca.toLowerCase());
+        (u.nome ?? "").toLowerCase().includes(busca.toLowerCase()) ||
+        (u.email ?? "").toLowerCase().includes(busca.toLowerCase());
       return matchFiltro && matchBusca;
     });
   }, [usuarios, filtrosAtivos, busca]);
@@ -116,7 +119,7 @@ export default function UsuariosView({ usuarios }) {
         </main>
 
         {/* ── Sidebar ── */}
-        <SidebarActions active="/admin/usuarios/gerenciar" />
+        <SidebarActions />
       </div>
     </div>
   );

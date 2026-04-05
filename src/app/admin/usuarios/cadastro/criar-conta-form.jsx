@@ -15,8 +15,14 @@ export function CriarContaForm() {
   const router = useRouter();
 
   useEffect(() => {
-    if (state?.ok) formRef.current?.reset();
-  }, [state?.ok]);
+    if (state?.ok) {
+      formRef.current?.reset();
+      const timer = setTimeout(() => {
+        router.push("/admin/usuarios/gerenciar");
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [state?.ok, router]);
 
   return (
     <div className={styles.page}>
@@ -38,7 +44,7 @@ export function CriarContaForm() {
             </div>
 
             <div className={styles.row}>
-              <span className={styles.label}>Login:</span>
+              <span className={styles.label}>Email:</span>
               <input
                 name="email"
                 type="email"
@@ -74,6 +80,7 @@ export function CriarContaForm() {
             {state?.message && (
               <p className={state.ok ? styles.msgOk : styles.msgError} role="status">
                 {state.message}
+                {state.ok && " Redirecionando em 10 segundos…"}
               </p>
             )}
 

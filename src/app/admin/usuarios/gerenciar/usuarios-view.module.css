@@ -144,14 +144,30 @@
   flex-shrink: 0;
 }
 
-.rowName {
+.rowInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   flex: 1;
+  overflow: hidden;
+}
+
+.rowName {
   font-size: var(--font-size-base);
   font-weight: 500;
   color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+}
+
+.rowRight {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .rowActions {
