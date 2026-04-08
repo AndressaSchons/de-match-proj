@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { USER_TYPES, USER_TYPE_LABELS } from "@/lib/user-types";
 import { updateContaPassword, updateContaProfile } from "./actions";
+import styles from "./conta.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
@@ -14,13 +15,13 @@ export function ContaForm({ email, perfil }) {
 
   return (
     <>
-      <form action={formAction} style={{ marginTop: "1rem", display: "grid", gap: "1rem", maxWidth: 420 }}>
-        <label style={{ display: "grid", gap: "0.35rem" }}>
+      <form action={formAction} className={styles.form}>
+        <label className={styles.field}>
           <span>E-mail</span>
-          <input type="text" value={email} readOnly style={{ opacity: 0.85 }} />
+          <input type="text" value={email} readOnly className={styles.inputReadonly} />
         </label>
 
-        <label style={{ display: "grid", gap: "0.35rem" }}>
+        <label className={styles.field}>
           <span>Nome</span>
           <input
             name="nome_completo"
@@ -32,7 +33,7 @@ export function ContaForm({ email, perfil }) {
           />
         </label>
 
-        <label style={{ display: "grid", gap: "0.35rem" }}>
+        <label className={styles.field}>
           <span>Tipo de usuário</span>
           {isAdmin ? (
             <select name="perfil_acesso" defaultValue={tipoAtual} required>
@@ -49,7 +50,7 @@ export function ContaForm({ email, perfil }) {
                 defaultValue={tipoAtual}
                 disabled
                 aria-disabled="true"
-                style={{ opacity: 0.85, cursor: "not-allowed" }}
+                className={styles.selectDisabled}
               >
                 {USER_TYPES.map((value) => (
                   <option key={value} value={value}>
@@ -62,32 +63,30 @@ export function ContaForm({ email, perfil }) {
         </label>
 
         {!isAdmin ? (
-          <p style={{ fontSize: "0.9rem", color: "#666", margin: 0 }}>
+          <p className={styles.hint}>
             Apenas um <strong>administrador</strong> pode alterar o tipo de usuário. O nome você edita
             livremente.
           </p>
         ) : (
-          <p style={{ fontSize: "0.9rem", color: "#666", margin: 0 }}>
-            Como administrador, você pode ajustar seu próprio tipo para testes. O primeiro admin da base
-            é definido no SQL (veja o README).
+          <p className={styles.hint}>
           </p>
         )}
 
-        <button type="submit" disabled={pending}>
+        <button type="submit" disabled={pending} className={styles.submitBtn}>
           {pending ? "Salvando…" : "Salvar conta"}
         </button>
 
         {state?.message ? (
-          <p style={{ margin: 0, color: state.ok ? "#15803d" : "#b91c1c" }} role="status">
+          <p className={state.ok ? styles.feedbackOk : styles.feedbackErr} role="status">
             {state.message}
           </p>
         ) : null}
       </form>
 
-      <section style={{ marginTop: "2rem", paddingTop: "1.5rem", borderTop: "1px solid #e5e7eb" }}>
-        <h2 style={{ fontSize: "1.1rem", margin: "0 0 0.75rem" }}>Alterar senha</h2>
-        <form action={pwdAction} style={{ display: "grid", gap: "1rem", maxWidth: 420 }}>
-          <label style={{ display: "grid", gap: "0.35rem" }}>
+      <section className={styles.passwordSection}>
+        <h2 className={styles.passwordTitle}>Alterar senha</h2>
+        <form action={pwdAction} className={styles.form}>
+          <label className={styles.field}>
             <span>Nova senha</span>
             <input
               name="new_password"
@@ -98,7 +97,7 @@ export function ContaForm({ email, perfil }) {
               placeholder="Mínimo 6 caracteres"
             />
           </label>
-          <label style={{ display: "grid", gap: "0.35rem" }}>
+          <label className={styles.field}>
             <span>Confirmar nova senha</span>
             <input
               name="confirm_password"
@@ -108,11 +107,11 @@ export function ContaForm({ email, perfil }) {
               autoComplete="new-password"
             />
           </label>
-          <button type="submit" disabled={pwdPending}>
+          <button type="submit" disabled={pwdPending} className={styles.submitBtn}>
             {pwdPending ? "Atualizando…" : "Atualizar senha"}
           </button>
           {pwdState?.message ? (
-            <p style={{ margin: 0, color: pwdState.ok ? "#15803d" : "#b91c1c" }} role="status">
+            <p className={pwdState.ok ? styles.feedbackOk : styles.feedbackErr} role="status">
               {pwdState.message}
             </p>
           ) : null}

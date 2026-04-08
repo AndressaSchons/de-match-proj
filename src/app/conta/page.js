@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { USER_TYPE_LABELS } from "@/lib/user-types";
 import { ContaForm } from "./conta-form";
+import styles from "./conta.module.css";
 
 export default async function ContaPage() {
   const supabase = await createClient();
@@ -18,14 +19,14 @@ export default async function ContaPage() {
 
   if (error) {
     return (
-      <main style={{ maxWidth: 720, margin: "2rem auto", padding: "1rem" }}>
-        <h1>Conta</h1>
-        <p style={{ color: "#b91c1c" }}>Não foi possível carregar o perfil: {error.message}</p>
-        <p style={{ color: "#666", marginTop: "0.5rem" }}>
+      <main className={styles.contaPage}>
+        <h1 className={styles.title}>Conta</h1>
+        <p className={styles.errorText}>Não foi possível carregar o perfil: {error.message}</p>
+        <p className={styles.muted}>
           Rode no Supabase, nesta ordem: <code>supabase/scripts/wipe_de_match.sql</code> e depois{" "}
           <code>recreate_de_match.sql</code> (veja o README).
         </p>
-        <Link href="/" style={{ display: "inline-block", marginTop: "1rem" }}>
+        <Link href="/" className={styles.backLink}>
           Voltar ao início
         </Link>
       </main>
@@ -38,9 +39,9 @@ export default async function ContaPage() {
       : "Voluntário";
 
   return (
-    <main style={{ maxWidth: 720, margin: "2rem auto", padding: "1rem" }}>
-      <h1>Conta</h1>
-      <p style={{ marginTop: "0.5rem", color: "#666" }}>
+    <main className={styles.contaPage}>
+      <h1 className={styles.title}>Conta</h1>
+      <p className={styles.lead}>
         Papel atual: <strong>{tipoLabel}</strong> — use isso no app para liberar telas e ações.
       </p>
 

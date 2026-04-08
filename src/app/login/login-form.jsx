@@ -1,9 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import styles from "./login-form.module.css";
+
+/** Evita open redirect: só caminhos relativos na mesma origem. */
+function safeRedirectPath(next) {
+  if (!next || typeof next !== "string") return "/";
+  const trimmed = next.trim();
+  if (!trimmed.startsWith("/") || trimmed.startsWith("//")) return "/";
+  return trimmed;
+}
 
 /* ─── Logo ─────────────────────────────────────────────── */
 function Logo() {
@@ -17,6 +25,7 @@ function Logo() {
 /* ═══════════════════════════════════════════════════════ */
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = useMemo(() => createClient(), []);
 
   const [email, setEmail]                           = useState("");
@@ -48,7 +57,7 @@ export default function LoginForm() {
 
     if (error) { setMessage(error.message); setLoading(false); return; }
 
-    router.push("/");
+    router.push(safeRedirectPath(searchParams.get("next")));
     router.refresh();
   }
 

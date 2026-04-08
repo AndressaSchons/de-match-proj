@@ -1,0 +1,143 @@
+/* Página Conta: texto sempre legível (escuro) sobre cartão claro — independente do prefers-color-scheme */
+
+.contaPage {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 1.5rem 1.75rem;
+  color: #171717;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  margin-top: 0.5rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.lead strong {
+  color: #111827;
+}
+
+.errorText {
+  color: var(--color-error);
+}
+
+.muted {
+  color: #6b7280;
+  margin-top: 0.5rem;
+  line-height: 1.45;
+}
+
+.muted code {
+  font-size: 0.85em;
+  color: #374151;
+  background: #f3f4f6;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+
+.backLink {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--color-green-dark);
+  font-weight: 600;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.form {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+  max-width: 420px;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field span {
+  color: #1f2937;
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.hint strong {
+  color: #374151;
+  font-weight: 600;
+}
+
+.submitBtn {
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  font-weight: var(--btn-font-weight);
+  letter-spacing: var(--btn-letter-spacing);
+  padding: var(--btn-padding);
+  border-radius: var(--radius-pill);
+  border: none;
+  background: linear-gradient(180deg, var(--color-green) 0%, var(--color-green-dark) 100%);
+  color: #fff;
+  width: 100%;
+  max-width: 280px;
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.feedbackOk {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--color-success);
+}
+
+.feedbackErr {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--color-error);
+}
+
+.passwordSection {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.passwordTitle {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.inputReadonly {
+  opacity: 0.92;
+  color: #374151;
+}
+
+.selectDisabled {
+  opacity: 0.9;
+  cursor: not-allowed;
+  color: #374151;
+}
