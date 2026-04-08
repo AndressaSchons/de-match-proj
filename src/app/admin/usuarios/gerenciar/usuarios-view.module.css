@@ -96,6 +96,16 @@
 /* ══════════════════════════════════════
    Center panel — Lista
 ══════════════════════════════════════ */
+.listError {
+  background: #fef2f2;
+  color: #991b1b;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  margin-bottom: 0.75rem;
+  border: 1px solid #fecaca;
+}
+
 .centerPanel {
   flex: 1;
   background: var(--color-mint);

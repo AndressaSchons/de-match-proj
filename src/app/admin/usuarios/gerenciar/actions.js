@@ -1,177 +1,180 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/utils/supabase/server";
-import { createAdminClient } from "@/utils/supabase/admin";
+import { redirect } from "next/navigation";
+import { getAdminDatabase, countAdministradores } from "@/lib/auth/admin-service";
+import { resolveFormData } from "@/lib/resolve-form-data";
 import { isUserType } from "@/lib/user-types";
 
-/* ─── guard: só admin executa ───────────────────────────── */
-async function getAdminOrThrow() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) throw new Error("Sessão expirada. Entre novamente.");
-
-  const { data: perfil } = await supabase
-    .from("perfil")
-    .select("perfil_acesso")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (perfil?.perfil_acesso !== "administrador") {
-    throw new Error("Apenas administradores podem realizar esta ação.");
-  }
-
-  return { supabase, user };
+function errMessage(e) {
+  return e instanceof Error ? e.message : "Erro inesperado.";
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Busca todos os usuários (perfil + email do auth)
-   Usado pelo page.js via import direto — não é Server Action
+   Lista todos os usuários (perfil + e-mail do Auth)
+   — precisa service role: RLS só permite SELECT do próprio perfil.
 ══════════════════════════════════════════════════════════ */
 export async function listarUsuarios() {
-  const supabase = await createClient();
-
-  const { data: perfis, error } = await supabase
-    .from("perfil")
-    .select("id, nome_completo, perfil_acesso, data_atualizacao")
-    .order("nome_completo", { ascending: true });
-
-  if (error) return { ok: false, usuarios: [], message: error.message };
-
-  // enriquece com email via admin client
-  let emailMap = {};
   try {
-    const admin = createAdminClient();
-    const { data } = await admin.auth.admin.listUsers({ perPage: 1000 });
-    emailMap = Object.fromEntries(
-      (data?.users ?? []).map((u) => [u.id, u.email])
-    );
-  } catch {
-    // sem SUPABASE_SERVICE_ROLE_KEY — emails omitidos
+    const { db } = await getAdminDatabase();
+
+    const { data: perfis, error } = await db
+      .from("perfil")
+      .select("id, nome_completo, perfil_acesso, data_atualizacao")
+      .order("nome_completo", { ascending: true });
+
+    if (error) return { ok: false, usuarios: [], message: error.message };
+
+    const { data: listData } = await db.auth.admin.listUsers({ perPage: 1000 });
+    const emailMap = Object.fromEntries((listData?.users ?? []).map((u) => [u.id, u.email]));
+
+    const usuarios = (perfis ?? []).map((p) => ({
+      id: p.id,
+      nome: p.nome_completo,
+      email: emailMap[p.id] ?? null,
+      perfil_acesso: p.perfil_acesso,
+      data_atualizacao: p.data_atualizacao,
+    }));
+
+    return { ok: true, usuarios };
+  } catch (e) {
+    return { ok: false, usuarios: [], message: errMessage(e) };
   }
-
-  const usuarios = (perfis ?? []).map((p) => ({
-    id:              p.id,
-    nome:            p.nome_completo,
-    email:           emailMap[p.id] ?? null,
-    perfil_acesso:   p.perfil_acesso,
-    data_atualizacao: p.data_atualizacao,
-  }));
-
-  return { ok: true, usuarios };
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Atualiza perfil de acesso de um usuário
+   Atualiza perfil de acesso
 ══════════════════════════════════════════════════════════ */
-export async function atualizarPerfilAcesso(_prevState, formData) {
+export async function atualizarPerfilAcesso(prevOrFormData, maybeFormData) {
+  const formData = resolveFormData(prevOrFormData, maybeFormData);
+  if (!formData) return { ok: false, message: "Requisição inválida." };
+
   try {
-    await getAdminOrThrow();
+    const { db } = await getAdminDatabase();
+    const id = String(formData.get("id") ?? "").trim();
+    const perfil_acesso = String(formData.get("perfil_acesso") ?? "").trim();
+
+    if (!id) return { ok: false, message: "ID do usuário não informado." };
+    if (!isUserType(perfil_acesso)) return { ok: false, message: "Perfil de acesso inválido." };
+
+    const { data: alvo } = await db.from("perfil").select("perfil_acesso").eq("id", id).maybeSingle();
+    if (!alvo) return { ok: false, message: "Usuário não encontrado." };
+
+    if (alvo.perfil_acesso === "administrador" && perfil_acesso !== "administrador") {
+      const n = await countAdministradores(db);
+      if (n <= 1) {
+        return { ok: false, message: "Não é possível remover o único administrador do sistema." };
+      }
+    }
+
+    const { error } = await db
+      .from("perfil")
+      .update({ perfil_acesso, data_atualizacao: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) return { ok: false, message: error.message };
+
+    revalidatePath("/admin/usuarios/gerenciar");
+    revalidatePath(`/admin/usuarios/${id}`);
+    return { ok: true, message: "Perfil atualizado com sucesso." };
   } catch (e) {
-    return { ok: false, message: e.message };
+    return { ok: false, message: errMessage(e) };
   }
-
-  const id            = String(formData.get("id") ?? "").trim();
-  const perfil_acesso = String(formData.get("perfil_acesso") ?? "").trim();
-
-  if (!id) return { ok: false, message: "ID do usuário não informado." };
-  if (!isUserType(perfil_acesso)) return { ok: false, message: "Perfil de acesso inválido." };
-
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("perfil")
-    .update({ perfil_acesso, data_atualizacao: new Date().toISOString() })
-    .eq("id", id);
-
-  if (error) return { ok: false, message: error.message };
-
-  revalidatePath("/admin/usuarios/gerenciar");
-  return { ok: true, message: "Perfil atualizado com sucesso." };
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Atualiza nome completo de um usuário
+   Atualiza nome completo
 ══════════════════════════════════════════════════════════ */
-export async function atualizarNome(_prevState, formData) {
+export async function atualizarNome(prevOrFormData, maybeFormData) {
+  const formData = resolveFormData(prevOrFormData, maybeFormData);
+  if (!formData) return { ok: false, message: "Requisição inválida." };
+
   try {
-    await getAdminOrThrow();
+    const { db } = await getAdminDatabase();
+    const id = String(formData.get("id") ?? "").trim();
+    const nome_completo = String(formData.get("nome_completo") ?? "").trim();
+
+    if (!id) return { ok: false, message: "ID do usuário não informado." };
+    if (!nome_completo) return { ok: false, message: "Nome não pode ser vazio." };
+
+    const { error } = await db
+      .from("perfil")
+      .update({ nome_completo, data_atualizacao: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) return { ok: false, message: error.message };
+
+    revalidatePath("/admin/usuarios/gerenciar");
+    revalidatePath(`/admin/usuarios/${id}`);
+    return { ok: true, message: "Nome atualizado com sucesso." };
   } catch (e) {
-    return { ok: false, message: e.message };
+    return { ok: false, message: errMessage(e) };
   }
-
-  const id            = String(formData.get("id") ?? "").trim();
-  const nome_completo = String(formData.get("nome_completo") ?? "").trim();
-
-  if (!id)            return { ok: false, message: "ID do usuário não informado." };
-  if (!nome_completo) return { ok: false, message: "Nome não pode ser vazio." };
-
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("perfil")
-    .update({ nome_completo, data_atualizacao: new Date().toISOString() })
-    .eq("id", id);
-
-  if (error) return { ok: false, message: error.message };
-
-  revalidatePath("/admin/usuarios/gerenciar");
-  return { ok: true, message: "Nome atualizado com sucesso." };
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Deleta usuário do auth (cascade apaga o perfil)
+   Remove usuário do Auth (perfil em cascade)
 ══════════════════════════════════════════════════════════ */
-export async function deletarUsuario(_prevState, formData) {
+export async function deletarUsuario(prevOrFormData, maybeFormData) {
+  const formData = resolveFormData(prevOrFormData, maybeFormData);
+  if (!formData) {
+    return { ok: false, message: "Requisição inválida." };
+  }
+
+  let user;
+  let db;
   try {
-    await getAdminOrThrow();
+    ({ user, db } = await getAdminDatabase());
   } catch (e) {
-    return { ok: false, message: e.message };
+    return { ok: false, message: errMessage(e) };
   }
 
   const id = String(formData.get("id") ?? "").trim();
   if (!id) return { ok: false, message: "ID do usuário não informado." };
 
-  let admin;
-  try {
-    admin = createAdminClient();
-  } catch (e) {
-    return { ok: false, message: e instanceof Error ? e.message : "Configuração incompleta." };
+  if (id === user.id) {
+    return { ok: false, message: "Você não pode excluir a própria conta por aqui." };
   }
 
-  const { error } = await admin.auth.admin.deleteUser(id);
+  const { data: alvo } = await db.from("perfil").select("perfil_acesso").eq("id", id).maybeSingle();
+  if (!alvo) return { ok: false, message: "Usuário não encontrado." };
 
+  if (alvo.perfil_acesso === "administrador") {
+    const n = await countAdministradores(db);
+    if (n <= 1) {
+      return { ok: false, message: "Não é possível excluir o único administrador do sistema." };
+    }
+  }
+
+  const { error } = await db.auth.admin.deleteUser(id);
   if (error) return { ok: false, message: error.message };
 
   revalidatePath("/admin/usuarios/gerenciar");
-  return { ok: true, message: "Usuário removido com sucesso." };
+  redirect("/admin/usuarios/gerenciar");
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Redefine senha de um usuário
+   Redefine senha (Auth)
 ══════════════════════════════════════════════════════════ */
-export async function redefinirSenha(_prevState, formData) {
+export async function redefinirSenha(prevOrFormData, maybeFormData) {
+  const formData = resolveFormData(prevOrFormData, maybeFormData);
+  if (!formData) return { ok: false, message: "Requisição inválida." };
+
   try {
-    await getAdminOrThrow();
+    const { db } = await getAdminDatabase();
+    const id = String(formData.get("id") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+
+    if (!id) return { ok: false, message: "ID do usuário não informado." };
+    if (password.length < 6) return { ok: false, message: "A senha deve ter pelo menos 6 caracteres." };
+
+    const { error } = await db.auth.admin.updateUserById(id, { password });
+    if (error) return { ok: false, message: error.message };
+
+    revalidatePath("/admin/usuarios/gerenciar");
+    revalidatePath(`/admin/usuarios/${id}`);
+    return { ok: true, message: "Senha redefinida com sucesso." };
   } catch (e) {
-    return { ok: false, message: e.message };
+    return { ok: false, message: errMessage(e) };
   }
-
-  const id       = String(formData.get("id") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-
-  if (!id)               return { ok: false, message: "ID do usuário não informado." };
-  if (password.length < 6) return { ok: false, message: "A senha deve ter pelo menos 6 caracteres." };
-
-  let admin;
-  try {
-    admin = createAdminClient();
-  } catch (e) {
-    return { ok: false, message: e instanceof Error ? e.message : "Configuração incompleta." };
-  }
-
-  const { error } = await admin.auth.admin.updateUserById(id, { password });
-
-  if (error) return { ok: false, message: error.message };
-
-  return { ok: true, message: "Senha redefinida com sucesso." };
 }

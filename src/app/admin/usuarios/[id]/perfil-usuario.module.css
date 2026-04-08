@@ -17,9 +17,11 @@
 .center {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   padding-top: 2rem;
+  gap: 1.25rem;
 }
 
 /* ── Card (shared) ── */
@@ -128,4 +130,104 @@
 .msgError {
   font-size: var(--font-size-sm);
   color: var(--color-error);
+}
+
+/* ── Ferramentas admin (senha / excluir) ── */
+.adminCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem 1.5rem;
+  width: 460px;
+  max-width: 100%;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adminTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.subForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.subLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.subField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.subField span {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.btnSenha {
+  align-self: flex-start;
+  padding: 8px 20px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--color-green);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.btnSenha:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.deleteBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.deleteHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.btnDanger {
+  align-self: flex-start;
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: #b91c1c;
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.btnDanger:hover {
+  filter: brightness(1.05);
+}
+
+.selfHint {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin: 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
 }

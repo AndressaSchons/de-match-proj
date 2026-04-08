@@ -10,10 +10,17 @@ export const metadata = {
 export default async function UsuariosPage() {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { usuarios } = await listarUsuarios();
+  const result = await listarUsuarios();
 
-  return <UsuariosView usuarios={usuarios} />;
+  return (
+    <UsuariosView
+      usuarios={result.usuarios ?? []}
+      listError={result.ok ? null : result.message}
+    />
+  );
 }

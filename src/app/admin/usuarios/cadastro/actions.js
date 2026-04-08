@@ -80,6 +80,7 @@ export async function createUserAccount(_prevState, formData) {
     return { ok: false, message: `Usuário criado no Auth, mas falhou ao salvar perfil: ${profileError.message}` };
   }
 
-  revalidatePath("/admin/usuarios");
+  revalidatePath("/admin/usuarios/gerenciar");
+  revalidatePath("/admin/usuarios/cadastro");
   return { ok: true, message: `Conta criada: ${email}. O usuário já pode entrar com essa senha.` };
 }

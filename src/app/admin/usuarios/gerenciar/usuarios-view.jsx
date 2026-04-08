@@ -34,7 +34,11 @@ function UsuarioRow({ usuario }) {
           <Link href={`/admin/usuarios/${usuario.id}`} className={styles.actionBtn} title="Visualizar">
             <FaEye />
           </Link>
-          <Link href={`/admin/usuarios/${usuario.id}/editar`} className={styles.actionBtn} title="Editar">
+          <Link
+            href={`/admin/usuarios/${usuario.id}?modo=editar`}
+            className={styles.actionBtn}
+            title="Editar"
+          >
             <FaPen />
           </Link>
         </div>
@@ -46,7 +50,7 @@ function UsuarioRow({ usuario }) {
 /* ═══════════════════════════════════════════════════════ */
 const FILTROS = ["voluntario", "administrador", "validador"];
 
-export default function UsuariosView({ usuarios }) {
+export default function UsuariosView({ usuarios, listError }) {
   const [filtrosAtivos, setFiltrosAtivos] = useState([]);
   const [busca, setBusca] = useState("");
 
@@ -108,6 +112,12 @@ export default function UsuariosView({ usuarios }) {
         {/* ── Lista ── */}
         <main className={styles.centerPanel}>
           <h2 className={styles.centerTitle}>Usuários do sistema</h2>
+
+          {listError ? (
+            <p className={styles.listError} role="alert">
+              {listError}
+            </p>
+          ) : null}
 
           <div className={styles.list}>
             {usuariosFiltrados.length === 0 ? (

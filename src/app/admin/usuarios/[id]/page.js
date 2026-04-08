@@ -1,6 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
-import { createAdminClient } from "@/utils/supabase/admin";
+import { getAdminDatabase } from "@/lib/auth/admin-service";
 import PerfilUsuario from "./perfil-usuario";
 
 export const metadata = {
@@ -8,30 +7,36 @@ export const metadata = {
 };
 
 export default async function PerfilUsuarioPage({ params, searchParams }) {
-  const { id }  = await params;
-  const { modo } = await searchParams; // ?modo=editar
-  const editar  = modo === "editar";
+  const { id } = await params;
+  const { modo } = await searchParams;
+  const editar = modo === "editar";
 
-  const supabase = await createClient();
+  let db;
+  let viewer;
+  try {
+    ({ db, user: viewer } = await getAdminDatabase());
+  } catch (e) {
+    const code = /** @type {{ code?: string }} */ (e)?.code;
+    if (code === "AUTH") {
+      redirect("/login?next=" + encodeURIComponent(`/admin/usuarios/${id}`));
+    }
+    redirect("/");
+  }
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: perfil } = await supabase
+  const { data: perfil, error } = await db
     .from("perfil")
     .select("id, nome_completo, perfil_acesso")
     .eq("id", id)
     .maybeSingle();
 
-  if (!perfil) notFound();
+  if (error || !perfil) notFound();
 
   let email = null;
   try {
-    const admin = createAdminClient();
-    const { data } = await admin.auth.admin.getUserById(id);
+    const { data } = await db.auth.admin.getUserById(id);
     email = data?.user?.email ?? null;
   } catch {
-    // sem SUPABASE_SERVICE_ROLE_KEY
+    email = null;
   }
 
   return (
@@ -41,6 +46,7 @@ export default async function PerfilUsuarioPage({ params, searchParams }) {
       email={email}
       perfilAcesso={perfil.perfil_acesso}
       editar={editar}
+      viewerId={viewer.id}
     />
   );
 }
