@@ -5,12 +5,20 @@ export const PERFIS_CADASTRO_ANIMAL = /** @type {const} */ ([
   "administrador",
 ]);
 
+/** RLS: DELETE em `animal` só para administrador. */
+export function podeExcluirAnimal(perfilAcesso) {
+  return perfilAcesso === "administrador";
+}
+
 /** Disponibilidade do animal (valor gravado no banco). */
 export const DISPONIBILIDADE = /** @type {const} */ ([
   { value: "disponivel", label: "Disponível para adoção" },
   { value: "em_processo", label: "Em processo de adoção" },
   { value: "indisponivel", label: "Indisponível no momento" },
 ]);
+
+export const SEXO_VALUES = /** @type {const} */ (["macho", "femea"]);
+export const PORTE_VALUES = /** @type {const} */ (["pequeno", "medio", "grande"]);
 
 export function podeCadastrarAnimal(perfilAcesso) {
   return PERFIS_CADASTRO_ANIMAL.includes(perfilAcesso ?? "");

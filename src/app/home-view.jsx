@@ -35,7 +35,13 @@ export default function HomeView({ animais, podeAnimal }) {
             {animais.length === 0 ? (
               <p className={styles.empty}>Nenhum animal cadastrado.</p>
             ) : (
-              animais.map((a) => <AnimalCard key={a.id} animal={a} />)
+              animais.map((a) => (
+                <AnimalCard
+                  key={a.id_animal}
+                  animal={a}
+                  hrefDetalhe={`/animais/${a.id_animal}`}
+                />
+              ))
             )}
           </div>
         </main>

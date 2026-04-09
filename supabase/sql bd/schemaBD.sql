@@ -112,6 +112,9 @@ CREATE TABLE public.animal (
   localizacao text,
   disponibilidade text NOT NULL,
   observacoes text,
+  sexo text,
+  porte text,
+  data_nascimento date,
   data_cadastro timestamptz NOT NULL DEFAULT NOW()
 );
 

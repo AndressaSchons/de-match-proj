@@ -8,6 +8,17 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s, transform 0.12s;
+}
+
+.cardLink:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
 /* ── Avatar ── */
 .avatar {
   width: 64px;
@@ -64,3 +75,5 @@
 
 .badgeAdocao  { background: var(--color-orange); }
 .badgeAdotado { background: var(--color-pink);   }
+.badgeEmProcesso { background: var(--color-gold); }
+.badgeIndisponivel { background: var(--color-muted); }
