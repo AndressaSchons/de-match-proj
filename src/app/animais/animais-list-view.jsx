@@ -5,7 +5,7 @@ import { AnimalCard } from "@/components/AnimalCard";
 import { SidebarActions } from "@/components/SidebarActions";
 import styles from "./animais-list-view.module.css";
 
-export default function AnimaisListView({ animais, podeAnimal }) {
+export default function AnimaisListView({ animais, podeAnimal, isAdmin }) {
   return (
     <div className={styles.page}>
       <div className={styles.body}>
@@ -34,7 +34,7 @@ export default function AnimaisListView({ animais, podeAnimal }) {
           </div>
         </main>
 
-        <SidebarActions podeAnimal={podeAnimal} />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );

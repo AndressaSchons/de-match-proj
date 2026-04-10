@@ -209,7 +209,7 @@ export default function PerfilUsuario({ id, nome, email, perfilAcesso, editar, v
             />
           )}
         </div>
-        <SidebarActions />
+        <SidebarActions isAdmin podeAnimal />
       </div>
     </div>
   );

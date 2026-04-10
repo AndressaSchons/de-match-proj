@@ -106,7 +106,7 @@ export function CriarContaForm() {
         </div>
 
         {/* ── Sidebar ── */}
-        <SidebarActions />
+        <SidebarActions isAdmin podeAnimal />
       </div>
     </div>
   );

@@ -47,10 +47,17 @@
 .btnGhost {
   padding: 6px 14px;
   border-radius: var(--radius-pill);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: #f3f4f6;
+  color: #111827;
   cursor: pointer;
   font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.btnGhost:hover {
+  background: #e5e7eb;
+  color: #030712;
 }
 
 .btnPrimary {

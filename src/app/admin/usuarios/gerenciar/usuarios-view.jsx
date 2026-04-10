@@ -129,7 +129,7 @@ export default function UsuariosView({ usuarios, listError }) {
         </main>
 
         {/* ── Sidebar ── */}
-        <SidebarActions />
+        <SidebarActions isAdmin podeAnimal />
       </div>
     </div>
   );

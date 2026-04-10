@@ -14,7 +14,7 @@ function labelDisponibilidade(value) {
   return DISPONIBILIDADE.find((d) => d.value === value)?.label ?? value ?? "—";
 }
 
-export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal }) {
+export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, isAdmin }) {
   const router = useRouter();
   const [delState, delAction, delPending] = useActionState(excluirAnimal, initialState);
 
@@ -115,7 +115,7 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal }
           ) : null}
         </main>
 
-        <SidebarActions podeAnimal={podeAnimal} />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );

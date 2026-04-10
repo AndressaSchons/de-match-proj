@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
+import { isAdministrador } from "@/lib/permissions";
 import { animalRowToFormDefaults } from "../../animal-map";
 import { EditarAnimalForm } from "./editar-animal-form";
 
@@ -35,5 +36,12 @@ export default async function EditarAnimalPage({ params }) {
 
   const defaultValues = animalRowToFormDefaults(animal);
 
-  return <EditarAnimalForm idAnimal={idNum} defaultValues={defaultValues} />;
+  return (
+    <EditarAnimalForm
+      idAnimal={idNum}
+      defaultValues={defaultValues}
+      isAdmin={isAdministrador(perfil?.perfil_acesso)}
+      podeAnimal
+    />
+  );
 }

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
+import { isAdministrador } from "@/lib/permissions";
 import AnimaisListView from "./animais-list-view";
 
 export const metadata = {
@@ -30,6 +31,7 @@ export default async function AnimaisPage() {
     <AnimaisListView
       animais={animais ?? []}
       podeAnimal={podeCadastrarAnimal(perfil?.perfil_acesso)}
+      isAdmin={isAdministrador(perfil?.perfil_acesso)}
     />
   );
 }

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
+import { isAdministrador } from "@/lib/permissions";
 import { CadastroAnimalForm } from "./cadastro-animal-form";
 
 export const metadata = {
@@ -23,5 +24,10 @@ export default async function CadastroAnimalPage() {
     redirect("/");
   }
 
-  return <CadastroAnimalForm />;
+  return (
+    <CadastroAnimalForm
+      isAdmin={isAdministrador(perfil?.perfil_acesso)}
+      podeAnimal
+    />
+  );
 }

@@ -33,6 +33,15 @@
   flex-wrap: wrap;
 }
 
+.rowAlignStart {
+  align-items: flex-start;
+}
+
+.inputStretch {
+  flex: 1;
+  min-width: 0;
+}
+
 .label {
   font-weight: 600;
   color: var(--color-text);

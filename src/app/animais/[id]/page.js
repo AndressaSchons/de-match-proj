@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { podeCadastrarAnimal, podeExcluirAnimal } from "@/lib/animal-constants";
+import { isAdministrador } from "@/lib/permissions";
 import { AnimalDetailView } from "./animal-detail-view";
 
 export async function generateMetadata({ params }) {
@@ -43,6 +44,7 @@ export default async function AnimalDetailPage({ params }) {
       podeEditar={podeCadastrarAnimal(perfil?.perfil_acesso)}
       podeExcluir={podeExcluirAnimal(perfil?.perfil_acesso)}
       podeAnimal={podeCadastrarAnimal(perfil?.perfil_acesso)}
+      isAdmin={isAdministrador(perfil?.perfil_acesso)}
     />
   );
 }

@@ -6,7 +6,7 @@ import { AnimalCard } from "@/components/AnimalCard";
 import { NotificationCard } from "@/components/NotificationCard";
 import styles from "./home-view.module.css";
 
-export default function HomeView({ animais, podeAnimal }) {
+export default function HomeView({ animais, podeAnimal, isAdmin }) {
   return (
     <div className={styles.page}>
       <div className={styles.body}>
@@ -15,12 +15,13 @@ export default function HomeView({ animais, podeAnimal }) {
         <aside className={styles.leftPanel}>
           <div className={styles.panelBox}>
             <h2 className={styles.panelTitle}>Notificações</h2>
-            <NotificationCard tipo="animal" mensagem="Novo animal cadastrado." />
-            <NotificationCard tipo="alerta" mensagem="Animal precisando de informações" />
+            <NotificationCard tipo="animal" mensagem="Novo animal cadastrado. EM BREVE" />
+            <NotificationCard tipo="alerta" mensagem="Animal precisando de informações. EM BREVE" />
           </div>
 
           <div className={`${styles.panelBox} ${styles.metricsBox}`}>
             <h2 className={styles.panelTitle}>Métricas</h2>
+            <p>Implementação em breve.</p>
           </div>
         </aside>
 
@@ -47,7 +48,7 @@ export default function HomeView({ animais, podeAnimal }) {
         </main>
 
         {/* ── Direita: Ações — sem active, nenhum botão destacado ── */}
-        <SidebarActions podeAnimal={podeAnimal} />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );

@@ -1,0 +1,90 @@
+.wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropzone {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  text-align: center;
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.dropzone:hover,
+.dropzone.dragOver {
+  border-color: var(--color-green);
+  background: rgba(46, 158, 107, 0.08);
+}
+
+.dropzone:focus {
+  outline: 2px solid var(--color-green);
+  outline-offset: 2px;
+}
+
+.hint {
+  margin: 0 0 0.35rem;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.btnFile {
+  margin-top: 0.35rem;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--color-green);
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.btnFile:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.preview {
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.previewImg {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+}
+
+.urlFallback {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  word-break: break-all;
+  max-width: 100%;
+}
+
+.error {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+}
+
+.hiddenInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}

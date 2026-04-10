@@ -1,6 +1,7 @@
 "use client";
 
 import { DISPONIBILIDADE } from "@/lib/animal-constants";
+import { AnimalPhotoUpload } from "@/components/AnimalPhotoUpload";
 import styles from "./cadastro/cadastro-animal-form.module.css";
 
 /**
@@ -37,18 +38,14 @@ export function AnimalFormFields({ defaultValues = {}, idAnimal, children }) {
           type="text"
           required
           autoComplete="off"
-          className={styles.inputShort}
+          className={styles.inputStretch}
           defaultValue={d.nome_animal ?? ""}
         />
-        <div className={styles.spacer} />
-        <input
-          name="foto"
-          type="url"
-          placeholder="URL da foto (opcional)"
-          autoComplete="off"
-          className={styles.inputMid}
-          defaultValue={d.foto ?? ""}
-        />
+      </div>
+
+      <div className={`${styles.row} ${styles.rowAlignStart}`}>
+        <span className={styles.label}>Foto:</span>
+        <AnimalPhotoUpload initialUrl={d.foto ?? null} />
       </div>
 
       <div className={styles.row}>

@@ -8,7 +8,10 @@ import styles from "./cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-export function CadastroAnimalForm() {
+/**
+ * @param {{ isAdmin?: boolean, podeAnimal?: boolean }} props
+ */
+export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(cadastrarAnimal, initialState);
   const formRef = useRef(null);
 
@@ -43,7 +46,7 @@ export function CadastroAnimalForm() {
           )}
         </form>
 
-        <SidebarActions active="/animais/cadastro" />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );

@@ -10,7 +10,10 @@ import styles from "../../cadastro/cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-export function EditarAnimalForm({ idAnimal, defaultValues }) {
+/**
+ * @param {{ idAnimal: number, defaultValues: object, isAdmin?: boolean, podeAnimal?: boolean }} props
+ */
+export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(atualizarAnimal, initialState);
   const router = useRouter();
 
@@ -47,7 +50,7 @@ export function EditarAnimalForm({ idAnimal, defaultValues }) {
           ) : null}
         </form>
 
-        <SidebarActions active="/animais/cadastro" />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );
