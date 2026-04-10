@@ -1,9 +1,5 @@
 -- =============================================================================
 -- Storage: bucket público `animal-fotos` + políticas para upload (autenticados)
--- =============================================================================
--- 1) No painel Supabase → Storage → "New bucket" → id: animal-fotos → Public.
--- 2) Rode este script no SQL Editor (ajuste o INSERT do bucket se já existir).
--- =============================================================================
 
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('animal-fotos', 'animal-fotos', true)
