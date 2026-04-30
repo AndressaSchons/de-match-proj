@@ -1,29 +1,17 @@
-import Link from "next/link";
-import { SidebarActions } from "@/components/SidebarActions";
-import styles from "./cadastro-adocao-placeholder.module.css";
+import { createClient } from "@/utils/supabase/server";
+import { CadastroAdocaoForm } from "./cadastro-adocao-form";
 
 export const metadata = {
   title: "Cadastrar adoção",
 };
 
-/** Página reservada ao fluxo de adoção; conteúdo será preenchido depois. */
-export default function CadastroAdocaoPage() {
-  return (
-    <div className={styles.page}>
-      <div className={styles.body}>
-        <main className={styles.center}>
-          <div className={styles.card}>
-            <h1 className={styles.title}>Cadastrar adoção</h1>
-            <p className={styles.lead}>
-              Implementação em breve.
-            </p>
-            <Link href="/" className={styles.back}>
-              Voltar ao início
-            </Link>
-          </div>
-        </main>
-        <SidebarActions isAdmin podeAnimal />
-      </div>
-    </div>
-  );
+export default async function CadastroAdocaoPage() {
+  const supabase = await createClient();
+  const { data: animais } = await supabase
+    .from("animal")
+    .select("id_animal,nome_animal,disponibilidade")
+    .eq("disponibilidade", "disponivel")
+    .order("nome_animal", { ascending: true });
+
+  return <CadastroAdocaoForm animais={animais ?? []} />;
 }

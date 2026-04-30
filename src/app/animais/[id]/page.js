@@ -38,13 +38,28 @@ export default async function AnimalDetailPage({ params }) {
 
   if (error || !animal) notFound();
 
+  const perfilAcesso = perfil?.perfil_acesso ?? null;
+  const isAdmin = isAdministrador(perfilAcesso);
+  const isValidador = perfilAcesso === "validador";
+
+  let termoAdocaoUrl = null;
+  if (animal.disponibilidade === "adotado" && (isAdmin || isValidador)) {
+    const { data: adocao } = await supabase
+      .from("adocao")
+      .select("termo_adocao")
+      .eq("id_animal", idNum)
+      .maybeSingle();
+    termoAdocaoUrl = adocao?.termo_adocao ?? null;
+  }
+
   return (
     <AnimalDetailView
       animal={animal}
       podeEditar={podeCadastrarAnimal(perfil?.perfil_acesso)}
       podeExcluir={podeExcluirAnimal(perfil?.perfil_acesso)}
       podeAnimal={podeCadastrarAnimal(perfil?.perfil_acesso)}
-      isAdmin={isAdministrador(perfil?.perfil_acesso)}
+      isAdmin={isAdmin}
+      termoAdocaoUrl={termoAdocaoUrl}
     />
   );
 }

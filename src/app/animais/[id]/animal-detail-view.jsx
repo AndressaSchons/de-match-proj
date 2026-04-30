@@ -14,7 +14,7 @@ function labelDisponibilidade(value) {
   return DISPONIBILIDADE.find((d) => d.value === value)?.label ?? value ?? "—";
 }
 
-export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, isAdmin }) {
+export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, isAdmin, termoAdocaoUrl }) {
   const router = useRouter();
   const [delState, delAction, delPending] = useActionState(excluirAnimal, initialState);
 
@@ -93,6 +93,21 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
             <dt>Vacinação</dt>
             <dd>{animal.vacinacao ?? "—"}</dd>
           </dl>
+
+          {typeof termoAdocaoUrl === "string" && termoAdocaoUrl ? (
+            <section className={styles.block}>
+              <h2 className={styles.blockTitle}>Termo de adoção</h2>
+              <p className={styles.blockText}>
+                <a href={termoAdocaoUrl} target="_blank" rel="noreferrer">
+                  Clique para visualizar
+                </a>
+                {" • "}
+                <a href={termoAdocaoUrl} download>
+                  Baixar
+                </a>
+              </p>
+            </section>
+          ) : null}
 
           {animal.descricao_historia ? (
             <section className={styles.block}>

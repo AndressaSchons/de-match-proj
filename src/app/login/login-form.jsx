@@ -150,7 +150,7 @@ export default function LoginForm() {
           {message && <p className={styles.message}>{message}</p>}
         </form>
 
-        <p className={styles.footer}>Desenvolvido por IFRS – Colli's group corporation</p>
+        <p className={styles.footer}>Desenvolvido por IFRS – Colli&apos;s group corporation</p>
       </div>
     );
   }
@@ -244,7 +244,7 @@ export default function LoginForm() {
         {message && <p className={styles.message}>{message}</p>}
       </div>
 
-      <p className={styles.footer}>Desenvolvido por IFRS – Colli's group corporation</p>
+      <p className={styles.footer}>Desenvolvido por IFRS – Colli&apos;s group corporation</p>
     </div>
   );
 }

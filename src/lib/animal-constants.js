@@ -15,6 +15,7 @@ export const DISPONIBILIDADE = /** @type {const} */ ([
   { value: "disponivel", label: "Disponível para adoção" },
   { value: "em_processo", label: "Em processo de adoção" },
   { value: "indisponivel", label: "Indisponível no momento" },
+  { value: "adotado", label: "Adotado" },
 ]);
 
 export const SEXO_VALUES = /** @type {const} */ (["macho", "femea"]);
