@@ -11,5 +11,7 @@ export function animalRowToFormDefaults(row) {
     raca: row.raca,
     descricao_historia: row.descricao_historia,
     observacoes: row.observacoes,
+    vacinacao: row.vacinacao,
+    localizacao: row.localizacao,
   };
 }

@@ -18,6 +18,8 @@ import styles from "./cadastro/cadastro-animal-form.module.css";
  *     raca: string | null,
  *     descricao_historia: string | null,
  *     observacoes: string | null,
+ *     vacinacao: string | null,
+ *     localizacao: string | null,
  *   }>,
  *   idAnimal?: number,
  * }} props
@@ -109,6 +111,28 @@ export function AnimalFormFields({ defaultValues = {}, idAnimal, children }) {
         />
         <span className={`${styles.label} ${styles.labelRight}`}>Cor/Raça:</span>
         <input name="raca" type="text" className={styles.inputMid} defaultValue={d.raca ?? ""} />
+      </div>
+
+      <div className={styles.row}>
+        <span className={styles.label}>Localização:</span>
+        <input
+          name="localizacao"
+          type="text"
+          className={styles.inputStretch}
+          placeholder="Cidade, abrigo, região…"
+          autoComplete="off"
+          defaultValue={d.localizacao ?? ""}
+        />
+      </div>
+
+      <div>
+        <p className={styles.sectionLabel}>Vacinação</p>
+        <textarea
+          name="vacinacao"
+          rows={3}
+          placeholder="Vacinas aplicadas, datas, pendências…"
+          defaultValue={d.vacinacao ?? ""}
+        />
       </div>
 
       <div>
