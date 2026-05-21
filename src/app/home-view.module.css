@@ -34,6 +34,8 @@
 
 .metricsBox {
   min-height: 120px;
+  max-height: 280px;
+  overflow-y: auto;
 }
 
 .panelTitle {

@@ -1,0 +1,70 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.empty {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.9);
+  text-align: center;
+  margin: 0;
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  margin: 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.totalNum {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-white);
+  line-height: 1.1;
+}
+
+.totalLabel {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-white);
+}
+
+.count {
+  font-weight: 700;
+}

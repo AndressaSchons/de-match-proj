@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { SidebarActions } from "@/components/SidebarActions";
 import { AnimalCard } from "@/components/AnimalCard";
+import { MetricsCard } from "@/components/MetricsCard";
 import { NotificationCard } from "@/components/NotificationCard";
 import styles from "./home-view.module.css";
 
-export default function HomeView({ animais, podeAnimal, isAdmin }) {
+export default function HomeView({ animais, podeAnimal, isAdmin, metricas = null }) {
   return (
     <div className={styles.page}>
       <div className={styles.body}>
@@ -19,10 +20,17 @@ export default function HomeView({ animais, podeAnimal, isAdmin }) {
             <NotificationCard tipo="alerta" mensagem="Animal precisando de informações. EM BREVE" />
           </div>
 
-          <div className={`${styles.panelBox} ${styles.metricsBox}`}>
-            <h2 className={styles.panelTitle}>Métricas</h2>
-            <p>Implementação em breve.</p>
-          </div>
+          {metricas != null ? (
+            <div className={`${styles.panelBox} ${styles.metricsBox}`}>
+              <h2 className={styles.panelTitle}>Métricas</h2>
+              <MetricsCard
+                totalGeral={metricas.totalGeral}
+                anoReferencia={metricas.anoReferencia}
+                porAno={metricas.porAno}
+                porMesAnoAtual={metricas.porMesAnoAtual}
+              />
+            </div>
+          ) : null}
         </aside>
 
         {/* ── Centro: Lista de animais ── */}

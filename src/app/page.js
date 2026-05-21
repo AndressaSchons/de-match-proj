@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { aggregateAdocaoMetrics } from "@/lib/adocao-metrics";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
-import { isAdministrador } from "@/lib/permissions";
+import { isAdministrador, podeVerMetricasAdocao } from "@/lib/permissions";
 import HomeView from "./home-view";
 
 export const metadata = {
@@ -31,13 +32,19 @@ export default async function HomePage() {
   const podeAnimal = podeCadastrarAnimal(perfil?.perfil_acesso);
   const isAdmin = isAdministrador(perfil?.perfil_acesso);
 
+  let metricas = null;
+  if (podeVerMetricasAdocao(perfil?.perfil_acesso)) {
+    const { data: adocoes } = await supabase.from("adocao").select("data_operacao");
+    const datas = (adocoes ?? []).map((a) => a.data_operacao);
+    metricas = aggregateAdocaoMetrics(datas);
+  }
+
   return (
     <HomeView
-      user={user}
-      perfil={perfil}
       animais={animais ?? []}
       podeAnimal={podeAnimal}
       isAdmin={isAdmin}
+      metricas={metricas}
     />
   );
 }
