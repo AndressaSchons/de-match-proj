@@ -165,8 +165,11 @@ export default function LoginForm() {
           /* ── Login form ── */
           <form onSubmit={handleLogin} className={styles.innerForm}>
             <div className={styles.field}>
-              <label className={styles.label}>Login</label>
+              <label htmlFor="login-email" className={styles.label}>
+                Login
+              </label>
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -176,8 +179,11 @@ export default function LoginForm() {
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label}>Senha</label>
+              <label htmlFor="login-password" className={styles.label}>
+                Senha
+              </label>
               <input
+                id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -212,8 +218,11 @@ export default function LoginForm() {
             </p>
 
             <div className={styles.field}>
-              <label className={styles.label}>Login</label>
+              <label htmlFor="login-email-forgot" className={styles.label}>
+                Login
+              </label>
               <input
+                id="login-email-forgot"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
