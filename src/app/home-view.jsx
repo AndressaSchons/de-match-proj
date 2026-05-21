@@ -13,6 +13,7 @@ export default function HomeView({
   isAdmin,
   metricas = null,
   notificacoesNovos = [],
+  notificacoesIncompletos = [],
 }) {
   return (
     <div className={styles.page}>
@@ -27,14 +28,25 @@ export default function HomeView({
             ) : (
               notificacoesNovos.map((n) => (
                 <NotificationCard
-                  key={n.id}
+                  key={`novo-${n.id}`}
                   tipo={n.tipo}
                   mensagem={n.mensagem}
                   href={n.href}
                 />
               ))
             )}
-            <NotificationCard tipo="alerta" mensagem="Animal precisando de informações. EM BREVE" />
+            {notificacoesIncompletos.length === 0 ? (
+              <p className={styles.notifEmpty}>Nenhum cadastro incompleto.</p>
+            ) : (
+              notificacoesIncompletos.map((n) => (
+                <NotificationCard
+                  key={`incompleto-${n.id}`}
+                  tipo={n.tipo}
+                  mensagem={n.mensagem}
+                  href={n.href}
+                />
+              ))
+            )}
           </div>
 
           {metricas != null ? (

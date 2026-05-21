@@ -3,9 +3,13 @@ import { createClient } from "@/utils/supabase/server";
 import { aggregateAdocaoMetrics } from "@/lib/adocao-metrics";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
 import {
+  buildNotificacoesIncompletos,
   buildNotificacoesNovosAnimais,
   dataCadastroDesdeNovosAnimais,
+  isAnimalCadastroIncompleto,
+  LIMITE_INCOMPLETOS,
   LIMITE_NOVOS_ANIMAL,
+  LOTE_BUSCA_INCOMPLETOS,
 } from "@/lib/notificacoes-animais";
 import { isAdministrador, podeVerMetricasAdocao } from "@/lib/permissions";
 import HomeView from "./home-view";
@@ -44,6 +48,20 @@ export default async function HomePage() {
 
   const notificacoesNovos = buildNotificacoesNovosAnimais(animaisNovos ?? []);
 
+  const { data: animaisLote } = await supabase
+    .from("animal")
+    .select(
+      "id_animal, nome_animal, foto, sexo, porte, data_nascimento, raca, descricao_historia, vacinacao, localizacao, data_cadastro"
+    )
+    .order("data_cadastro", { ascending: false })
+    .limit(LOTE_BUSCA_INCOMPLETOS);
+
+  const incompletos = (animaisLote ?? [])
+    .filter(isAnimalCadastroIncompleto)
+    .slice(0, LIMITE_INCOMPLETOS);
+
+  const notificacoesIncompletos = buildNotificacoesIncompletos(incompletos);
+
   const podeAnimal = podeCadastrarAnimal(perfil?.perfil_acesso);
   const isAdmin = isAdministrador(perfil?.perfil_acesso);
 
@@ -61,6 +79,7 @@ export default async function HomePage() {
       isAdmin={isAdmin}
       metricas={metricas}
       notificacoesNovos={notificacoesNovos}
+      notificacoesIncompletos={notificacoesIncompletos}
     />
   );
 }
