@@ -18,7 +18,7 @@ Projeto de sistema de canil (login, perfis, cadastro de animal). Stack: Next.js 
 - No **SQL Editor**, execute **`supabase/sql bd/storage_animal_fotos.sql`** depois do schema principal. Isso garante o bucket e as políticas RLS para usuários **autenticados** enviarem e lerem objetos nesse bucket.
 - O cadastro/edição de animal envia a imagem pelo navegador (arrastar e soltar ou arquivo); a coluna `animal.foto` guarda a **URL pública** retornada pelo Storage. Sem login válido na mesma origem do app, o upload falha.
 
-## Termo de adoção (Supabase Storage)
+## Termo de adoção (Armazenamento fica no Supabase Storage)
 
 - No painel Supabase → **Storage**, crie um bucket público **`adocao-termos`** (ou rode o `INSERT` do arquivo abaixo).
 - No **SQL Editor**, execute **`supabase/sql bd/storage_adocao_termos.sql`** depois do schema principal. Isso cria o bucket e as policies RLS para usuários **autenticados** enviarem e lerem os termos.
