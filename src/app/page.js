@@ -2,6 +2,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { aggregateAdocaoMetrics } from "@/lib/adocao-metrics";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
+import {
+  buildNotificacoesNovosAnimais,
+  dataCadastroDesdeNovosAnimais,
+  LIMITE_NOVOS_ANIMAL,
+} from "@/lib/notificacoes-animais";
 import { isAdministrador, podeVerMetricasAdocao } from "@/lib/permissions";
 import HomeView from "./home-view";
 
@@ -29,6 +34,16 @@ export default async function HomePage() {
     .order("data_cadastro", { ascending: false })
     .limit(3);
 
+  const desde = dataCadastroDesdeNovosAnimais();
+  const { data: animaisNovos } = await supabase
+    .from("animal")
+    .select("id_animal, nome_animal, data_cadastro")
+    .gte("data_cadastro", desde)
+    .order("data_cadastro", { ascending: false })
+    .limit(LIMITE_NOVOS_ANIMAL);
+
+  const notificacoesNovos = buildNotificacoesNovosAnimais(animaisNovos ?? []);
+
   const podeAnimal = podeCadastrarAnimal(perfil?.perfil_acesso);
   const isAdmin = isAdministrador(perfil?.perfil_acesso);
 
@@ -45,6 +60,7 @@ export default async function HomePage() {
       podeAnimal={podeAnimal}
       isAdmin={isAdmin}
       metricas={metricas}
+      notificacoesNovos={notificacoesNovos}
     />
   );
 }

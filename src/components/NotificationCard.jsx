@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FaPaw, FaTriangleExclamation, FaCircleInfo, FaCircleCheck } from "react-icons/fa6";
 import styles from "./NotificationCard.module.css";
 
@@ -16,17 +17,30 @@ const COLORS = {
 };
 
 /**
- * @param {"animal"|"alerta"|"info"|"sucesso"} tipo
- * @param {string} mensagem
+ * @param {{
+ *   tipo?: "animal"|"alerta"|"info"|"sucesso",
+ *   mensagem: string,
+ *   href?: string,
+ * }} props
  */
-export function NotificationCard({ tipo = "info", mensagem }) {
+export function NotificationCard({ tipo = "info", mensagem, href }) {
   const Icon = ICONS[tipo] ?? ICONS.info;
   const color = COLORS[tipo] ?? COLORS.info;
 
-  return (
-    <div className={styles.card}>
+  const inner = (
+    <>
       <Icon className={styles.icon} style={{ color }} />
       <span className={styles.text}>{mensagem}</span>
-    </div>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className={`${styles.card} ${styles.cardLink}`}>
+        {inner}
+      </Link>
+    );
+  }
+
+  return <div className={styles.card}>{inner}</div>;
 }

@@ -7,7 +7,13 @@ import { MetricsCard } from "@/components/MetricsCard";
 import { NotificationCard } from "@/components/NotificationCard";
 import styles from "./home-view.module.css";
 
-export default function HomeView({ animais, podeAnimal, isAdmin, metricas = null }) {
+export default function HomeView({
+  animais,
+  podeAnimal,
+  isAdmin,
+  metricas = null,
+  notificacoesNovos = [],
+}) {
   return (
     <div className={styles.page}>
       <div className={styles.body}>
@@ -16,7 +22,18 @@ export default function HomeView({ animais, podeAnimal, isAdmin, metricas = null
         <aside className={styles.leftPanel}>
           <div className={styles.panelBox}>
             <h2 className={styles.panelTitle}>Notificações</h2>
-            <NotificationCard tipo="animal" mensagem="Novo animal cadastrado. EM BREVE" />
+            {notificacoesNovos.length === 0 ? (
+              <p className={styles.notifEmpty}>Nenhum animal novo nos últimos 3 dias.</p>
+            ) : (
+              notificacoesNovos.map((n) => (
+                <NotificationCard
+                  key={n.id}
+                  tipo={n.tipo}
+                  mensagem={n.mensagem}
+                  href={n.href}
+                />
+              ))
+            )}
             <NotificationCard tipo="alerta" mensagem="Animal precisando de informações. EM BREVE" />
           </div>
 
