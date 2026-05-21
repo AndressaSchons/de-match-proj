@@ -1,109 +1,249 @@
-# de-match-proj
+# De Match — Sistema de gestão de canil (ONG)
 
-Projeto de sistema de canil (login, perfis, cadastro de animal). Stack: Next.js + Supabase.
+Aplicação web para apoiar uma ONG no **cadastro e acompanhamento de animais**, **controle de adoções**, **perfis de equipe** e **painéis operacionais** (notificações e métricas). Desenvolvido no contexto acadêmico (IFRS — Colli's group corporation).
 
-## Passos para rodar o projeto
+## Acesso
 
-1. **`npm install`**
-2. Criar **`.env`** na raiz (copia do `.env.example`) e **colocar as infos** do Supabase:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_ROLE_KEY` — só se for usar o painel de **criar usuário** (`/admin/usuarios`); pega em *Project Settings → API → service_role*
-3. No Supabase (**SQL Editor**), montar o banco na ordem: **`limpar banco.sql`** e em seguida **`schemaBD.sql`** (ambos em `supabase/sql bd`). Só faz o passo do limpar se você quiser zerar o modelo; se for banco novo, pode ir direto no `schemaBD.sql` se já estiver vazio.
-4. **`npm run dev`** e abrir o que o terminal mostrar (geralmente [http://localhost:3000](http://localhost:3000)).
+| Ambiente | URL |
+|----------|-----|
+| **Hospedagem oficial (produção)** | [https://de-match-proj.vercel.app/](https://de-match-proj.vercel.app/) |
+| **Desenvolvimento local** | [http://localhost:3000](http://localhost:3000) (após `npm run dev`) |
 
-## Fotos dos animais (Supabase Storage)
+Na produção, rotas privadas exigem login. Usuários da equipe usam conta criada no Supabase Auth.
 
-- No painel Supabase → **Storage**, crie um bucket público **`animal-fotos`** (ou rode o `INSERT` do arquivo abaixo).
-- No **SQL Editor**, execute **`supabase/sql bd/storage_animal_fotos.sql`** depois do schema principal. Isso garante o bucket e as políticas RLS para usuários **autenticados** enviarem e lerem objetos nesse bucket.
-- O cadastro/edição de animal envia a imagem pelo navegador (arrastar e soltar ou arquivo); a coluna `animal.foto` guarda a **URL pública** retornada pelo Storage. Sem login válido na mesma origem do app, o upload falha.
+---
 
-## Termo de adoção (Armazenamento fica no Supabase Storage)
+## Para que serve
 
-- No painel Supabase → **Storage**, crie um bucket público **`adocao-termos`** (ou rode o `INSERT` do arquivo abaixo).
-- No **SQL Editor**, execute **`supabase/sql bd/storage_adocao_termos.sql`** depois do schema principal. Isso cria o bucket e as policies RLS para usuários **autenticados** enviarem e lerem os termos.
-- No cadastro de adoção, o campo `adocao.termo_adocao` armazena a **URL pública** do arquivo anexado.
+O sistema centraliza o dia a dia da ONG em um único lugar:
 
-## Coisas úteis
+- **Registrar animais** com ficha completa (foto, história, saúde, localização, disponibilidade para adoção).
+- **Acompanhar pendências** na home (animais novos e cadastros incompletos).
+- **Registrar adoções** com termo anexado e atualização automática do status do animal.
+- **Administrar usuários** (apenas administrador): criar contas, alterar perfil, redefinir senha.
+- **Consultar métricas de adoção** (administrador e validador): totais por ano e por mês.
 
-- Primeiro **admin** da conta: dá pra subir com `UPDATE` na tabela `perfil` (tem exemplo nos `.sql` da pasta do banco).
-- Se der erro ao mudar `perfil_acesso` no SQL Editor, roda o script **`corrigir_trigger_primeiro_admin.sql`**.
-- Voluntário precisa da policy certa pra cadastrar animal: **`atualizar_rls_animal_voluntario.sql`** se o banco foi criado antes dessa mudança.
+---
 
-Qualquer dúvida, mexe no `.env` e confere se o banco tá igual ao `schemaBD.sql`.
+## Stack utilizada
+
+| Camada | Tecnologia |
+|--------|------------|
+| Framework front / back (App Router) | [Next.js](https://nextjs.org/) 16 |
+| UI | [React](https://react.dev/) 19 + CSS Modules |
+| Ícones | [react-icons](https://react-icons.github.io/react-icons/) |
+| Banco, autenticação e arquivos | [Supabase](https://supabase.com/) (PostgreSQL, Auth, Storage, RLS) |
+| Hospedagem | [Vercel](https://vercel.com/) |
+| Testes unitários | [Vitest](https://vitest.dev/) |
+| Testes funcionais (E2E) | [Playwright](https://playwright.dev/) |
+| Qualidade web | [Google Lighthouse](https://developer.chrome.com/docs/lighthouse/overview) |
+| Lint | ESLint (eslint-config-next) |
+
+**Requisito de runtime:** Node.js `>= 20.19.0`
+
+---
+
+## Perfis de acesso
+
+| Perfil | O que pode fazer (resumo) |
+|--------|---------------------------|
+| **Voluntário** | Cadastrar e editar animais; ver notificações; ver lista e fichas |
+| **Validador** | Tudo do voluntário + métricas de adoção na home + ver termo de adoção |
+| **Administrador** | Tudo do validador + excluir animal + gerenciar usuários + cadastro de adoção e usuários |
+
+Regras detalhadas estão no banco (RLS) e em `src/lib/permissions.js` / `src/lib/animal-constants.js`.
+
+---
+
+## Funcionalidades principais
+
+### Autenticação e conta
+
+- Login com e-mail e senha (Supabase Auth).
+- Recuperação de senha por e-mail.
+- Página **Minha conta** (`/conta`): editar nome e alterar senha.
+
+### Home (`/`)
+
+- Lista resumida dos animais mais recentes.
+- **Notificações:** animais cadastrados nos últimos 3 dias; alertas de cadastro incompleto (campos obrigatórios para ficha completa).
+- **Métricas de adoção** (admin e validador): total geral, por ano e por mês do ano corrente.
+- Atalhos laterais conforme o perfil.
+
+### Animais (`/animais`)
+
+- Listagem com filtros visuais de disponibilidade.
+- **Cadastro** (`/animais/cadastro`): nome, foto (Storage), sexo, porte, castração, situação, data de nascimento, raça, localização, vacinação, história e observações.
+- **Ficha** (`/animais/[id]`): visualização completa; termo de adoção (admin/validador, se adotado).
+- **Edição** (`/animais/[id]/editar`): mesmos campos do cadastro.
+- **Exclusão:** somente administrador.
+
+### Adoções (admin)
+
+- **Cadastrar adoção** (`/admin/adocoes/cadastro`): vincula adotante, animal e termo (PDF/imagem no bucket `adocao-termos`); marca o animal como adotado.
+
+### Administração de usuários (admin)
+
+- **Criar usuário** (`/admin/usuarios/cadastro`) — exige `SUPABASE_SERVICE_ROLE_KEY` no servidor.
+- **Gerenciar usuários** (`/admin/usuarios/gerenciar`): listar, filtrar por perfil, editar perfil e nome.
+- **Perfil do usuário** (`/admin/usuarios/[id]`): detalhes e ações administrativas.
+
+---
+
+## Estrutura do repositório (visão geral)
+
+```
+src/
+  app/              # Rotas Next.js (páginas e Server Actions)
+  components/       # UI reutilizável (nav, cards, formulários, métricas)
+  lib/              # Regras de negócio (validação, notificações, permissões)
+  utils/supabase/   # Clientes Supabase (browser, server, middleware)
+supabase/sql bd/    # Schema PostgreSQL, RLS, buckets Storage
+e2e/                # Testes Playwright
+```
+
+---
+
+## Como configurar (desenvolvimento local)
+
+### 1. Dependências
+
+```bash
+npm install
+```
+
+### 2. Variáveis de ambiente
+
+Copie `.env.example` para `.env` na raiz e preencha:
+
+| Variável | Obrigatória | Uso |
+|----------|-------------|-----|
+| `NEXT_PUBLIC_SUPABASE_URL` | Sim | URL do projeto Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Sim | Chave anon (pública) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Para admin de usuários | Criar/editar usuários no painel admin |
+| `E2E_USER_EMAIL` / `E2E_USER_PASSWORD` | Só para testes E2E | Usuário de teste no Supabase |
+
+No **Vercel**, configure as mesmas variáveis em *Project Settings → Environment Variables* (não commite o `.env`).
+
+### 3. Banco de dados (Supabase)
+
+No **SQL Editor**, na ordem:
+
+1. `supabase/sql bd/limpar banco.sql` — apenas se quiser zerar o banco.
+2. `supabase/sql bd/schemaBD.sql` — tabelas, RLS e políticas principais.
+3. `supabase/sql bd/storage_animal_fotos.sql` — bucket `animal-fotos`.
+4. `supabase/sql bd/storage_adocao_termos.sql` — bucket `adocao-termos`.
+
+Scripts auxiliares (se necessário):
+
+- `corrigir_trigger_primeiro_admin.sql` — erro ao definir primeiro admin.
+- `atualizar_rls_animal_voluntario.sql` — banco antigo sem permissão de voluntário em `animal`.
+
+### 4. Primeiro administrador
+
+Crie um usuário no Supabase Auth, faça login uma vez e execute no SQL Editor um `UPDATE` em `perfil` (exemplos nos `.sql` da pasta do banco) para `perfil_acesso = 'administrador'`.
+
+### 5. Subir o app
+
+```bash
+npm run dev
+```
+
+Abra [http://localhost:3000](http://localhost:3000). Sem sessão, o middleware redireciona para `/login`.
+
+### Build de produção (local)
+
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## Storage (fotos e termos)
+
+### Fotos dos animais — bucket `animal-fotos`
+
+- Público para leitura; upload por usuários autenticados.
+- A coluna `animal.foto` guarda a URL pública retornada pelo upload no cadastro/edição.
+
+### Termos de adoção — bucket `adocao-termos`
+
+- Termo anexado no cadastro de adoção; URL gravada em `adocao.termo_adocao`.
+
+Sem login válido e buckets configurados, upload falha — confira RLS e `.env` na mesma origem do app.
+
+---
+
+## Scripts npm
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Build de produção |
+| `npm run start` | Servidor após build |
+| `npm run lint` | Análise estática (ESLint) |
+| `npm test` | Testes unitários (Vitest) |
+| `npm run test:watch` | Vitest em modo watch |
+| `npm run test:e2e` | Testes funcionais (Playwright) |
+| `npm run lighthouse` | Relatório Lighthouse (app rodando em `localhost:3000`) |
+
+---
 
 ## Testes automatizados
 
-O projeto inclui um pacote mínimo para trabalho acadêmico: **unitários**, **funcionais (E2E)**, **qualidade web (Lighthouse)** e **análise estática (ESLint)**.
-
-### Tipos de teste (visão geral)
+Pacote mínimo para documentação acadêmica e garantia de qualidade.
 
 | Tipo | O que verifica | Ferramenta | Comando |
 |------|----------------|------------|---------|
-| **Unitário** | Funções e regras isoladas (notificações, validação de animal, permissões) | Vitest | `npm test` |
-| **Funcional / E2E** | Fluxo completo no navegador (login, cadastro, notificação na home) | Playwright | `npm run test:e2e` |
-| **Qualidade web** | Performance, acessibilidade e boas práticas da página | Google Lighthouse | `npm run lighthouse` |
-| **Estático** | Padrões e erros de código no projeto | ESLint | `npm run lint` |
+| **Unitário** | Regras isoladas (notificações, validação de animal, permissões) | Vitest | `npm test` |
+| **Funcional / E2E** | Login e cadastro de animal com notificação na home | Playwright | `npm run test:e2e` |
+| **Qualidade web** | Performance, acessibilidade e boas práticas | Lighthouse | `npm run lighthouse` |
+| **Estático** | Padrões de código | ESLint | `npm run lint` |
 
-### Testes unitários (Vitest)
+### Testes unitários
 
-Arquivos em `src/lib/*.test.js`:
+Arquivos em `src/lib/*.test.js` (12 testes): notificações, `animal-form-parse`, permissões.
 
-- `notificacoes-animais.test.js` — cadastro incompleto, mensagens e links de notificação
-- `animal-form-parse.test.js` — validação do formulário de animal
-- `permissions.test.js` — perfis (cadastro, exclusão, métricas)
+Configuração: `vitest.config.mjs`.
 
-```bash
-npm test
-```
-
-Modo desenvolvimento (re-executa ao salvar):
-
-```bash
-npm run test:watch
-```
-
-### Testes funcionais / E2E (Playwright)
-
-Requer usuário real no Supabase (voluntário, validador ou administrador). No `.env`:
-
-```env
-E2E_USER_EMAIL=seu@email.com
-E2E_USER_PASSWORD=sua_senha
-```
+### Testes funcionais (E2E)
 
 Cenários em `e2e/`:
 
-1. **login.spec.js** — login e exibição da home
-2. **cadastro-animal.spec.js** — cadastro mínimo e card “Novo:” na home
+1. **login.spec.js** — equipe faz login e vê a home (“Animais”).
+2. **cadastro-animal.spec.js** — cadastro mínimo e card “Novo:” na home.
 
-O Playwright sobe o `npm run dev` automaticamente. Para instalar o navegador na primeira vez:
+Requer `E2E_USER_EMAIL` e `E2E_USER_PASSWORD` no `.env`. Primeira execução:
 
 ```bash
 npx playwright install chromium
 npm run test:e2e
 ```
 
-**Problemas comuns (E2E):**
+**Problemas comuns (E2E):** credenciais inválidas (HTTP 400 no Supabase); variáveis vazias no `.env`.
 
-- `waiting for getByLabel('Login')` — o `<label>` precisa estar ligado ao `<input>` (`htmlFor` / `id`); já corrigido em `login-form.jsx`.
-- `HTTP 400` no login — e-mail ou senha errados em `E2E_USER_EMAIL` / `E2E_USER_PASSWORD`. Use um usuário que **existe no Supabase Auth** (Authentication → Users) e que faça login manualmente em `/login` com a mesma senha.
-- Variáveis vazias — confira o `.env` na raiz (mesmos valores que você usa no app).
+### Lighthouse
 
-### Google Lighthouse
-
-Com o app rodando (`npm run dev` em outro terminal):
+Com `npm run dev` em outro terminal:
 
 ```bash
 npm run lighthouse
 ```
 
-Gera `lighthouse-report.html` na raiz. Use um print do relatório no trabalho (scores de Performance, Accessibility, Best Practices).
+Gera `lighthouse-report.html`. Em ambiente sem login, `/` redireciona para `/login` — mencione isso no relatório se auditar a home.
 
-### ESLint (análise estática)
+---
 
-```bash
-npm run lint
-```
+## Dúvidas frequentes
 
-Não executa o sistema; verifica o código-fonte antes de commitar.
+- **App em branco ou erro de env:** confira `.env` e variáveis no Vercel.
+- **Upload de foto falha:** bucket `animal-fotos` + scripts SQL de Storage + usuário logado.
+- **Voluntário não cadastra animal:** rode `atualizar_rls_animal_voluntario.sql` se o schema for antigo.
+- **Painel admin de usuários:** precisa de `SUPABASE_SERVICE_ROLE_KEY` no servidor.
+
+---
+
+## Créditos
+
+Desenvolvido por **IFRS – Colli's group corporation**.
