@@ -86,7 +86,6 @@ export function AnimalFormFields({ defaultValues = {}, idAnimal, children }) {
         <select name="castrado" required defaultValue={castradoVal}>
           <option value="sim">Sim</option>
           <option value="nao">Não</option>
-          <option value="desconhecido">Desconhecido</option>
         </select>
         <span className={`${styles.label} ${styles.labelRight}`}>Situação:</span>
         <select name="disponibilidade" required defaultValue={d.disponibilidade ?? ""}>

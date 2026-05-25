@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { cadastrarAnimal } from "../actions";
 import { AnimalFormFields } from "../animal-form";
 import { SidebarActions } from "@/components/SidebarActions";
@@ -14,6 +15,7 @@ const initialState = { ok: undefined, message: "" };
 export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(cadastrarAnimal, initialState);
   const formRef = useRef(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (state?.ok) formRef.current?.reset();
@@ -34,7 +36,11 @@ export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
             >
               {pending ? "Salvando…" : "Salvar"}
             </button>
-            <button type="reset" className={styles.btnCancel}>
+            <button
+              type="button"
+              className={styles.btnCancel}
+              onClick={() => router.back()}
+            >
               Cancelar
             </button>
           </div>
