@@ -109,9 +109,14 @@
 /* ── Feedback message ── */
 .message {
   margin-top: var(--gap-md);
-  font-size: var(--font-size-sm);
-  color: var(--color-text);
+  font-size: 0.95rem;
+  color: #fff;
+  background-color: #d32f2f;
+  padding: 10px 14px;
+  border-radius: 10px;
   text-align: center;
+  font-weight: 600;
+  width: 100%;
 }
 
 /* ── Footer ── */
