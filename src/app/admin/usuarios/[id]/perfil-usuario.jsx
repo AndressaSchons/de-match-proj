@@ -188,8 +188,8 @@ function ModoEdit({ id, nome, email, perfilAcesso, viewerId }) {
 /* ═══════════════════════════════════════════════════════ */
 export default function PerfilUsuario({ id, nome, email, perfilAcesso, editar, viewerId }) {
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className={`pageBody ${styles.bodyCenter}`} data-page-body>
         <div className={styles.center}>
           {editar ? (
             <ModoEdit

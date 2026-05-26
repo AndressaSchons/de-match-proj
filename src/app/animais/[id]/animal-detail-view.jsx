@@ -25,8 +25,8 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className="pageBody" data-page-body>
         <main className={styles.main}>
           <div className={styles.toolbar}>
             <button type="button" onClick={() => router.back()} className={styles.btnGhost}>

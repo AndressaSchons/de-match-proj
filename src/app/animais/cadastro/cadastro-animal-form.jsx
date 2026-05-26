@@ -22,8 +22,8 @@ export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
   }, [state?.ok]);
 
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className="pageBody" data-page-body>
         <form ref={formRef} action={formAction} className={styles.card}>
           <AnimalFormFields />
 

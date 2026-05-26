@@ -7,8 +7,8 @@ import styles from "./animais-list-view.module.css";
 
 export default function AnimaisListView({ animais, podeAnimal, isAdmin }) {
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className="pageBody" data-page-body>
         <main className={styles.main}>
           <div className={styles.header}>
             <h1 className={styles.title}>Animais</h1>

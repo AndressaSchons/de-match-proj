@@ -22,8 +22,8 @@ export function CadastroAdocaoForm({ animais }) {
   const podeCadastrar = Array.isArray(animais) && animais.length > 0;
 
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className={`pageBody ${styles.bodyCenter}`} data-page-body>
         <div className={styles.center}>
           <form ref={formRef} action={formAction} className={styles.card}>
             <h1 className={styles.title}>Cadastrar adoção</h1>

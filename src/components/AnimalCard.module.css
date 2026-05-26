@@ -77,3 +77,27 @@
 .badgeAdotado { background: var(--color-pink);   }
 .badgeEmProcesso { background: var(--color-gold); }
 .badgeIndisponivel { background: var(--color-muted); }
+
+@media (max-width: 768px) {
+  .card {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .info {
+    min-width: 0;
+    flex: 1 1 calc(100% - 80px);
+  }
+
+  .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .badgeWrap {
+    margin-left: 0;
+    width: 100%;
+    padding-left: calc(64px + var(--gap-lg));
+  }
+}

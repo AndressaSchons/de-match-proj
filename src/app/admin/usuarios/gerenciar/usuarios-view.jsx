@@ -71,8 +71,8 @@ export default function UsuariosView({ usuarios, listError }) {
   }, [usuarios, filtrosAtivos, busca]);
 
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className="pageBody" data-page-body>
 
         {/* ── Filtros ── */}
         <aside className={styles.leftPanel}>

@@ -141,3 +141,19 @@
   cursor: not-allowed;
   color: #374151;
 }
+
+@media (max-width: 768px) {
+  .contaPage {
+    margin: 1rem var(--gap-md);
+    padding: 1.25rem 1rem;
+  }
+
+  .form {
+    max-width: 100%;
+  }
+
+  .submitBtn {
+    max-width: 100%;
+    min-height: 44px;
+  }
+}

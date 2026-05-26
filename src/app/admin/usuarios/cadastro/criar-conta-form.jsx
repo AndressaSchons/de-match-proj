@@ -25,8 +25,8 @@ export function CriarContaForm() {
   }, [state?.ok, router]);
 
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className={`pageBody ${styles.bodyCenter}`} data-page-body>
 
         {/* ── Card central ── */}
         <div className={styles.center}>

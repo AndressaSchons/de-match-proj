@@ -59,7 +59,13 @@
   /* ── Page layout — padrão de todas as telas internas ── */
   --page-min-height:  calc(100vh - 52px); /* desconta AppNav */
   --page-padding:     var(--gap-xl);
+  --page-padding-mobile: var(--gap-lg);
   --page-gap:         1.2rem;
+
+  /* ── Breakpoints (referência para @media nos módulos) ── */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --sidebar-mobile-height: 72px;
 
   /* ── AppNav ── */
   --nav-height: 52px;
@@ -158,6 +164,18 @@ button {
   gap: var(--page-gap);
   padding: var(--page-padding);
   align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-padding: var(--page-padding-mobile);
+  }
+
+  .pageBody {
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: calc(var(--sidebar-mobile-height) + var(--page-gap));
+  }
 }
 
 /* ── Shared feedback messages ── */

@@ -1,0 +1,17 @@
+/* Layout compartilhado — telas com SidebarActions e corpo de página */
+
+@media (max-width: 768px) {
+  [data-page-body] {
+    flex-direction: column;
+    align-items: stretch;
+    padding-bottom: calc(var(--sidebar-mobile-height) + var(--page-gap)) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  [data-page-body] {
+    padding-left: var(--gap-md) !important;
+    padding-right: var(--gap-md) !important;
+    padding-top: var(--gap-md) !important;
+  }
+}

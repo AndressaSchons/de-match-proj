@@ -88,3 +88,16 @@
   opacity: 0;
   pointer-events: none;
 }
+
+@media (max-width: 768px) {
+  .wrap {
+    width: 100%;
+  }
+
+  .previewImg {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}

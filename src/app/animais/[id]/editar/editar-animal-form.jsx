@@ -18,8 +18,8 @@ export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, pod
   const router = useRouter();
 
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className="pageBody" data-page-body>
         <form action={formAction} className={styles.card}>
           <div className={styles.row} style={{ marginBottom: "0.5rem" }}>
             <Link href={`/animais/${idAnimal}`} style={{ fontSize: "var(--font-size-sm)", color: "var(--color-green-dark)" }}>

@@ -12,7 +12,7 @@
   background: var(--color-mint);
   border-radius: var(--radius-lg);
   padding: 2.5rem 2rem 2rem;
-  width: 340px;
+  width: min(340px, calc(100vw - 2rem));
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -43,10 +43,30 @@
 }
 
 @media (max-width: 480px) {
+  .page {
+    padding: var(--gap-md);
+    justify-content: flex-start;
+    padding-top: 2rem;
+  }
+
+  .card {
+    padding: 2rem 1.25rem 1.5rem;
+  }
+
   .logoWrap {
     margin-top: 8px;
     width: 80px;
     height: 80px;
+  }
+
+  .btnPrimary {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .footer {
+    margin-top: 1.25rem;
+    text-align: center;
   }
 }
 

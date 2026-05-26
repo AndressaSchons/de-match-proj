@@ -16,8 +16,8 @@ export default function HomeView({
   notificacoesIncompletos = [],
 }) {
   return (
-    <div className={styles.page}>
-      <div className={styles.body}>
+    <div className="pageLayout">
+      <div className="pageBody" data-page-body>
 
         {/* ── Esquerda: Notificações + Métricas ── */}
         <aside className={styles.leftPanel}>

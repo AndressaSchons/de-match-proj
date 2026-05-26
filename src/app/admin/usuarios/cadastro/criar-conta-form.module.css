@@ -1,17 +1,4 @@
-.page {
-  min-height: var(--page-min-height);
-  display: flex;
-  flex-direction: column;
-  background: var(--color-bg);
-}
-
-/* ── Body layout ── */
-.body {
-  display: flex;
-  flex: 1;
-  gap: var(--page-gap);
-  padding: var(--page-padding);
-  align-items: flex-start;
+.bodyCenter {
   justify-content: center;
 }
 
@@ -107,4 +94,38 @@
 .msgError {
   font-size: var(--font-size-sm);
   color: var(--color-error);
+}
+
+@media (max-width: 768px) {
+  .center {
+    padding-top: 0;
+    width: 100%;
+  }
+
+  .card {
+    width: min(440px, 100%);
+    padding: var(--card-padding);
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .label {
+    width: auto;
+    white-space: normal;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    gap: var(--gap-md);
+  }
+
+  .btnCancel,
+  .btnSave {
+    width: 100%;
+    min-height: 44px;
+    text-align: center;
+  }
 }
