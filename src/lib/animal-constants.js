@@ -14,7 +14,7 @@ export function podeExcluirAnimal(perfilAcesso) {
 export const DISPONIBILIDADE = /** @type {const} */ ([
   { value: "disponivel", label: "Disponível para adoção" },
   { value: "em_processo", label: "Em processo de adoção" },
-  { value: "indisponivel", label: "Indisponível no momento" },
+  { value: "indisponivel", label: "Falecido" },
   { value: "adotado", label: "Adotado" },
 ]);
 

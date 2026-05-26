@@ -5,7 +5,7 @@ import styles from "./AnimalCard.module.css";
 const BADGE = {
   disponivel: { label: "Disponível", cls: "badgeAdocao" },
   em_processo: { label: "Em processo", cls: "badgeEmProcesso" },
-  indisponivel: { label: "Indisponível", cls: "badgeIndisponivel" },
+  indisponivel: { label: "Falecido", cls: "badgeIndisponivel" },
   adocao: { label: "Adoção", cls: "badgeAdocao" },
   adotado: { label: "Adotado", cls: "badgeAdotado" },
 };

@@ -97,15 +97,15 @@
 .hero {
   margin-bottom: 1rem;
   border-radius: var(--radius-md);
-  overflow: hidden;
-  max-height: 280px;
+  background: #f3f4f6;
 }
 
 .heroImg {
   width: 100%;
   height: auto;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
+  border-radius: var(--radius-md);
 }
 
 .dl {
