@@ -11,16 +11,22 @@ import styles from "./perfil-usuario.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
+function Feedback({ state }) {
+  if (!state?.message) return null;
+  return (
+    <div className={state.ok ? styles.feedbackOk : styles.feedbackError} role="status">
+      <span className={styles.feedbackIcon}>{state.ok ? "✓" : "✕"}</span>
+      {state.message}
+    </div>
+  );
+}
+
 function AdminTools({ id, isSelf }) {
   const [pwdState, pwdAction, pwdPending] = useActionState(redefinirSenha, initialState);
   const [delState, delAction, delPending] = useActionState(deletarUsuario, initialState);
 
   function confirmDelete(e) {
-    if (
-      !confirm(
-        "Excluir este usuário permanentemente? Esta ação não pode ser desfeita."
-      )
-    ) {
+    if (!confirm("Excluir este usuário permanentemente? Esta ação não pode ser desfeita.")) {
       e.preventDefault();
     }
   }
@@ -31,27 +37,19 @@ function AdminTools({ id, isSelf }) {
 
       <form action={pwdAction} className={styles.subForm}>
         <input type="hidden" name="id" value={id} />
-        <p className={styles.subLabel}>Definir nova senha de acesso</p>
+        <p className={styles.subLabel}>Redefinir senha de acesso</p>
         <label className={styles.subField}>
           <span>Nova senha</span>
           <input
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            placeholder="Mínimo 6 caracteres"
+            name="password" type="password" required minLength={6}
+            autoComplete="new-password" placeholder="Mínimo 6 caracteres"
             className={styles.input}
           />
         </label>
         <button type="submit" disabled={pwdPending} className={styles.btnSenha}>
           {pwdPending ? "Salvando…" : "Redefinir senha"}
         </button>
-        {pwdState?.message ? (
-          <p className={pwdState.ok ? styles.msgOk : styles.msgError} role="status">
-            {pwdState.message}
-          </p>
-        ) : null}
+        <Feedback state={pwdState} />
       </form>
 
       {!isSelf ? (
@@ -61,11 +59,7 @@ function AdminTools({ id, isSelf }) {
           <button type="submit" disabled={delPending} className={styles.btnDanger}>
             {delPending ? "Excluindo…" : "Excluir usuário"}
           </button>
-          {delState?.message ? (
-            <p className={delState.ok ? styles.msgOk : styles.msgError} role="status">
-              {delState.message}
-            </p>
-          ) : null}
+          <Feedback state={delState} />
         </form>
       ) : (
         <p className={styles.selfHint}>Para excluir a própria conta, use outro administrador ou o painel do Supabase.</p>
@@ -74,140 +68,100 @@ function AdminTools({ id, isSelf }) {
   );
 }
 
-/* ─── Modo visualização ─────────────────────────────────── */
+/* ─── Modo visualização ── */
 function ModoView({ id, nome, email, perfilAcesso, viewerId }) {
   const router = useRouter();
-  const isSelf = viewerId === id;
-
   return (
     <>
       <div className={styles.card}>
+        <div className={styles.toolbar}>
+          <button type="button" onClick={() => router.back()} className={styles.backBtn}>← Voltar</button>
+          <h1 className={styles.cardTitle}>Perfil do usuário</h1>
+        </div>
+
         <div className={styles.row}>
           <span className={styles.label}>Nome:</span>
           <span className={styles.value}>{nome ?? "—"}</span>
         </div>
-
         <div className={styles.row}>
           <span className={styles.label}>Login:</span>
           <span className={styles.value}>{email ?? "—"}</span>
         </div>
-
         <div className={styles.row}>
           <span className={styles.label}>Tipo de perfil:</span>
-          <span className={styles.badge}>
-            {USER_TYPE_LABELS[perfilAcesso] ?? perfilAcesso}
-          </span>
+          <span className={styles.badge}>{USER_TYPE_LABELS[perfilAcesso] ?? perfilAcesso}</span>
         </div>
 
         <div className={styles.actions}>
-          <Link href={`/admin/usuarios/${id}?modo=editar`} className={styles.btnEdit}>
+          <Link href={`/admin/usuarios/${id}?modo=editar`} className={styles.backBtn}>
             Editar
           </Link>
-          <button type="button" onClick={() => router.back()} className={styles.btnBack}>
-            Voltar
-          </button>
         </div>
       </div>
-
-      <AdminTools id={id} isSelf={isSelf} />
+      <AdminTools id={id} isSelf={viewerId === id} />
     </>
   );
 }
 
-/* ─── Modo edição ───────────────────────────────────────── */
+/* ─── Modo edição ── */
 function ModoEdit({ id, nome, email, perfilAcesso, viewerId }) {
   const [state, formAction, pending] = useActionState(atualizarUsuario, initialState);
   const router = useRouter();
-  const isSelf = viewerId === id;
 
   return (
     <>
       <form action={formAction} className={styles.card}>
         <input type="hidden" name="id" value={id} />
 
+        <div className={styles.toolbar}>
+          <button type="button" onClick={() => router.back()} className={styles.backBtn}>← Voltar</button>
+          <h1 className={styles.cardTitle}>Editar usuário</h1>
+        </div>
+
         <div className={styles.row}>
           <span className={styles.label}>Nome:</span>
-          <input
-            name="nome_completo"
-            type="text"
-            required
-            defaultValue={nome}
-            autoComplete="name"
-            className={styles.input}
-          />
+          <input name="nome_completo" type="text" required defaultValue={nome}
+            autoComplete="name" className={styles.input} />
         </div>
-
         <div className={styles.row}>
           <span className={styles.label}>Login:</span>
-          <input
-            type="email"
-            value={email ?? "—"}
-            readOnly
-            disabled
-            className={`${styles.input} ${styles.inputDisabled}`}
-          />
+          <input type="email" value={email ?? "—"} readOnly disabled
+            className={`${styles.input} ${styles.inputDisabled}`} />
         </div>
-
         <div className={styles.row}>
           <span className={styles.label}>Tipo de perfil:</span>
           <select name="perfil_acesso" required defaultValue={perfilAcesso} className={styles.select}>
             {USER_TYPES.map((value) => (
-              <option key={value} value={value}>
-                {USER_TYPE_LABELS[value]}
-              </option>
+              <option key={value} value={value}>{USER_TYPE_LABELS[value]}</option>
             ))}
           </select>
         </div>
 
-        {state?.message && (
-          <p className={state.ok ? styles.msgOk : styles.msgError} role="status">
-            {state.message}
-          </p>
-        )}
+        <Feedback state={state} />
 
         <div className={styles.actions}>
           <button type="button" onClick={() => router.back()} className={styles.btnEdit}>
             Cancelar
           </button>
-          <button
-            type="submit"
-            disabled={pending}
-            className={styles.btnBack}
-            style={{ opacity: pending ? 0.75 : 1 }}
-          >
+          <button type="submit" disabled={pending} className={styles.btnBack}>
             {pending ? "Salvando…" : "Salvar"}
           </button>
         </div>
       </form>
-
-      <AdminTools id={id} isSelf={isSelf} />
+      <AdminTools id={id} isSelf={viewerId === id} />
     </>
   );
 }
 
-/* ═══════════════════════════════════════════════════════ */
 export default function PerfilUsuario({ id, nome, email, perfilAcesso, editar, viewerId }) {
   return (
     <div className="pageLayout">
       <div className={`pageBody ${styles.bodyCenter}`} data-page-body>
         <div className={styles.center}>
-          {editar ? (
-            <ModoEdit
-              id={id}
-              nome={nome}
-              email={email}
-              perfilAcesso={perfilAcesso}
-              viewerId={viewerId}
-            />
-          ) : (
-            <ModoView
-              id={id}
-              nome={nome}
-              email={email}
-              perfilAcesso={perfilAcesso}
-              viewerId={viewerId}
-            />
-          )}
+          {editar
+            ? <ModoEdit id={id} nome={nome} email={email} perfilAcesso={perfilAcesso} viewerId={viewerId} />
+            : <ModoView id={id} nome={nome} email={email} perfilAcesso={perfilAcesso} viewerId={viewerId} />
+          }
         </div>
         <SidebarActions isAdmin podeAnimal />
       </div>

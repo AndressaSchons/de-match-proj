@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { cadastrarAdocao } from "./actions";
 import { SidebarActions } from "@/components/SidebarActions";
 import { AdocaoTermoUpload } from "@/components/AdocaoTermoUpload";
@@ -8,30 +9,51 @@ import styles from "./cadastro-adocao-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-/**
- * @param {{ animais: Array<{ id_animal: number, nome_animal: string, disponibilidade?: string | null }> }} props
- */
 export function CadastroAdocaoForm({ animais }) {
   const [state, formAction, pending] = useActionState(cadastrarAdocao, initialState);
-  const formRef = useRef(null);
+  const formRef  = useRef(null);
+  const router   = useRouter();
+
+  // Remonta o AdocaoTermoUpload após sucesso (limpa o arquivo)
+  const [formKey, setFormKey] = useState(0);
+  // Bloqueia salvar enquanto o arquivo está subindo
+  const [termoUploading, setTermoUploading] = useState(false);
+
+  const onTermoUploadingChange = useCallback((v) => setTermoUploading(v), []);
 
   useEffect(() => {
-    if (state?.ok) formRef.current?.reset();
+    if (state?.ok) {
+      formRef.current?.reset();
+      setFormKey((k) => k + 1);
+    }
   }, [state?.ok]);
 
   const podeCadastrar = Array.isArray(animais) && animais.length > 0;
+  const canSave = podeCadastrar && !pending && !termoUploading;
+
+  function getSaveLabel() {
+    if (termoUploading) return "Aguardando arquivo…";
+    if (pending)        return "Salvando…";
+    return "Salvar";
+  }
 
   return (
     <div className="pageLayout">
       <div className={`pageBody ${styles.bodyCenter}`} data-page-body>
         <div className={styles.center}>
           <form ref={formRef} action={formAction} className={styles.card}>
-            <h1 className={styles.title}>Cadastrar adoção</h1>
 
+            {/* ── Toolbar ── */}
+            <div className={styles.toolbar}>
+              <button type="button" onClick={() => router.back()} className={styles.backBtn}>
+                ← Voltar
+              </button>
+              <h1 className={styles.title}>Cadastrar adoção</h1>
+            </div>
+
+            {/* ── Animal ── */}
             <div className={styles.fieldStack}>
-              <label className={styles.label} htmlFor="id_animal">
-                Animal
-              </label>
+              <label className={styles.label} htmlFor="id_animal">Animal</label>
               <select
                 id="id_animal"
                 name="id_animal"
@@ -41,44 +63,52 @@ export function CadastroAdocaoForm({ animais }) {
                 defaultValue=""
               >
                 <option value="" disabled>
-                  {podeCadastrar ? "Selecione um animal" : "Nenhum animal disponível"}
+                  {podeCadastrar ? "Selecione um animal…" : "Nenhum animal disponível"}
                 </option>
                 {animais?.map((a) => (
                   <option key={a.id_animal} value={a.id_animal}>
-                    #{a.id_animal} — {a.nome_animal}
+                    {a.nome_animal}
                   </option>
                 ))}
               </select>
             </div>
 
+            {/* ── Termo ── */}
             <div className={styles.fieldStack}>
               <label className={styles.label} htmlFor="termo_anexo_url_fake">
-                Termo de adoção (anexo)
+                Termo de adoção (PDF ou imagem)
               </label>
               <div id="termo_anexo_url_fake" aria-label="Upload do termo de adoção">
-                <AdocaoTermoUpload />
+                <AdocaoTermoUpload
+                  key={formKey}
+                  onUploadingChange={onTermoUploadingChange}
+                />
               </div>
             </div>
 
-            {state?.message && (
-              <p className={state.ok ? styles.msgOk : styles.msgError} role="status">
+            {/* ── Feedback ── */}
+            {state?.message ? (
+              <div className={state.ok ? styles.feedbackOk : styles.feedbackError} role="status">
+                <span className={styles.feedbackIcon}>{state.ok ? "✓" : "✕"}</span>
                 {state.message}
-              </p>
-            )}
+              </div>
+            ) : null}
 
+            {/* ── Actions ── */}
             <div className={styles.actions}>
-              <button type="reset" className={styles.btnCancel} disabled={pending}>
+              <button type="button" className={styles.btnCancel} onClick={() => router.back()}>
                 Cancelar
               </button>
               <button
                 type="submit"
-                disabled={!podeCadastrar || pending}
+                disabled={!canSave}
                 className={styles.btnSave}
-                style={{ opacity: pending ? 0.75 : 1 }}
+                title={termoUploading ? "Aguarde o envio do arquivo antes de salvar" : undefined}
               >
-                {pending ? "Salvando…" : "Salvar"}
+                {getSaveLabel()}
               </button>
             </div>
+
           </form>
         </div>
 
@@ -87,4 +117,3 @@ export function CadastroAdocaoForm({ animais }) {
     </div>
   );
 }
-

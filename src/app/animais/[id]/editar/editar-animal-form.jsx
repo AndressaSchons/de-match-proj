@@ -10,9 +10,6 @@ import styles from "../../cadastro/cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-/**
- * @param {{ idAnimal: number, defaultValues: object, isAdmin?: boolean, podeAnimal?: boolean }} props
- */
 export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(atualizarAnimal, initialState);
   const router = useRouter();
@@ -21,23 +18,29 @@ export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, pod
     <div className="pageLayout">
       <div className="pageBody" data-page-body>
         <form action={formAction} className={styles.card}>
-          <div className={styles.row} style={{ marginBottom: "0.5rem" }}>
-            <Link href={`/animais/${idAnimal}`} style={{ fontSize: "var(--font-size-sm)", color: "var(--color-green-dark)" }}>
-              Voltar ao perfil
+
+          {/* ── Toolbar ── */}
+          <div className={styles.toolbar}>
+            <Link href={`/animais/${idAnimal}`} className={styles.backBtn}>
+              ← Voltar ao perfil
             </Link>
+            <h1 className={styles.cardTitle}>Editar animal</h1>
           </div>
 
           <AnimalFormFields idAnimal={idAnimal} defaultValues={defaultValues} />
 
           <div className={styles.actions}>
-            <button type="button" className={styles.btnCancel} onClick={() => router.push(`/animais/${idAnimal}`)}>
+            <button
+              type="button"
+              className={styles.btnCancel}
+              onClick={() => router.push(`/animais/${idAnimal}`)}
+            >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={pending}
               className={styles.btnSave}
-              style={{ opacity: pending ? 0.75 : 1 }}
             >
               {pending ? "Salvando…" : "Salvar alterações"}
             </button>

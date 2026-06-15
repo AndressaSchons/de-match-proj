@@ -36,7 +36,7 @@ export default async function HomePage() {
     .from("animal")
     .select("id_animal, nome_animal, disponibilidade, sexo, porte, foto")
     .order("data_cadastro", { ascending: false })
-    .limit(3);
+    .limit(5); // ← 5 animais
 
   const desde = dataCadastroDesdeNovosAnimais();
   const { data: animaisNovos } = await supabase

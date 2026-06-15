@@ -6,7 +6,7 @@
 
 .empty {
   font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.9);
+  color: #6b7280;
   text-align: center;
   margin: 0;
 }
@@ -17,20 +17,21 @@
   align-items: center;
   gap: 0.1rem;
   margin: 0;
-  padding-bottom: 0.35rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
 .totalNum {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  color: var(--color-white);
+  color: var(--color-green);
   line-height: 1.1;
 }
 
 .totalLabel {
   font-size: var(--font-size-sm);
-  color: rgba(255, 255, 255, 0.9);
+  color: #6b7280;
+  font-weight: 500;
 }
 
 .section {
@@ -44,8 +45,8 @@
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.05em;
+  color: #9ca3af;
 }
 
 .list {
@@ -62,9 +63,10 @@
   justify-content: space-between;
   align-items: center;
   font-size: var(--font-size-sm);
-  color: var(--color-white);
+  color: #374151;
 }
 
 .count {
   font-weight: 700;
+  color: #111827;
 }

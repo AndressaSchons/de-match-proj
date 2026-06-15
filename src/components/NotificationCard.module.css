@@ -1,36 +1,36 @@
 .card {
-  background: var(--color-white);
+  background: #f8f9fb;
   border-radius: var(--radius-sm);
-  padding: 0.6rem 0.8rem;
+  padding: 0.55rem 0.75rem;
   display: flex;
   align-items: flex-start;
-  gap: var(--gap-sm);
-  font-size: var(--font-size-sm);
-  color: #000000;
-  line-height: 1.4;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  border: 1px solid rgba(0,0,0,0.06);
 }
 
 .icon {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   flex-shrink: 0;
   margin-top: 2px;
-  min-width: 1.1rem;
 }
 
 .text {
   flex: 1;
-  color: #000000;
+  color: #374151;
+  font-weight: 500;
 }
 
 .cardLink {
   text-decoration: none;
   color: inherit;
-  transition: opacity 0.15s ease, box-shadow 0.15s ease;
+  transition: background 0.15s, box-shadow 0.15s;
 }
 
 .cardLink:hover {
-  opacity: 0.92;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background: #f0faf5;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
 }
 
 .cardLink:focus-visible {
@@ -39,12 +39,10 @@
 }
 
 @media (max-width: 768px) {
-  .card {
-    width: 100%;
-    min-width: 0;
-  }
+  .card { width: 100%; min-width: 0; }
+  .text { word-break: break-word; }
+}
 
-  .text {
-    word-break: break-word;
-  }
+.prefix {
+  font-weight: 700;
 }

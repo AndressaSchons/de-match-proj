@@ -1,52 +1,64 @@
 /* ── Left panel ── */
 .leftPanel {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  width: 200px;
+  width: 215px;
   flex-shrink: 0;
-}
-
-.panelBox {
-  background: var(--color-green);
-  border-radius: var(--radius-lg);
-  padding: 1rem;
+  position: sticky;
+  top: calc(var(--nav-height) + var(--page-padding));
   display: flex;
   flex-direction: column;
-  gap: var(--gap-md);
-}
-
-.metricsBox {
-  min-height: 120px;
-  max-height: 280px;
+  gap: 1rem;
+  /* altura máxima = viewport menos nav menos padding top e bottom */
+  max-height: calc(100vh - var(--nav-height) - 2 * var(--page-padding));
   overflow-y: auto;
 }
 
+.panelBox {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  border: 1px solid rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+
+.metricsBox {
+  min-height: 80px;
+}
+
 .panelTitle {
-  color: var(--color-white);
-  font-weight: 700;
-  font-size: 1rem;
-  text-align: center;
+  color: #111827;
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid var(--color-green);
+  margin-bottom: 0.1rem;
 }
 
 .notifEmpty {
   margin: 0;
   font-size: var(--font-size-sm);
-  color: #000000;
+  color: #9ca3af;
   text-align: center;
-  line-height: 1.35;
+  line-height: 1.4;
+  padding: 0.25rem 0;
 }
 
 /* ── Center panel ── */
 .centerPanel {
   flex: 1;
-  background: var(--color-mint);
+  background: var(--color-white);
   border-radius: var(--radius-lg);
   padding: 1.4rem 1.6rem;
   display: flex;
   flex-direction: column;
   gap: var(--gap-lg);
-  box-shadow: var(--shadow-card);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  border: 1px solid rgba(0,0,0,0.06);
   min-height: 400px;
 }
 
@@ -54,18 +66,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
 }
 
 .centerTitle {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--color-text);
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #111827;
+  letter-spacing: -0.01em;
 }
 
 .verTodos {
   font-size: var(--font-size-sm);
-  color: var(--color-text);
-  text-decoration: underline;
+  color: var(--color-green);
+  font-weight: 600;
+  text-decoration: none;
+  padding: 4px 13px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-green);
+  transition: background 0.15s, color 0.15s;
+}
+.verTodos:hover {
+  background: var(--color-green);
+  color: #fff;
 }
 
 /* ── Animal list ── */
@@ -85,15 +109,10 @@
 @media (max-width: 768px) {
   .leftPanel {
     width: 100%;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
   }
-
-  .centerPanel {
-    min-height: 0;
-    padding: var(--card-padding);
-  }
-
-  .centerHeader {
-    flex-wrap: wrap;
-    gap: var(--gap-sm);
-  }
+  .centerPanel { min-height: 0; padding: var(--card-padding); }
+  .centerHeader { flex-wrap: wrap; gap: var(--gap-sm); }
 }

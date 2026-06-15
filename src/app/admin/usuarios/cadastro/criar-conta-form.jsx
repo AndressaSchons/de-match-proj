@@ -12,14 +12,12 @@ const initialState = { ok: undefined, message: "" };
 export function CriarContaForm() {
   const [state, formAction, pending] = useActionState(createUserAccount, initialState);
   const formRef = useRef(null);
-  const router = useRouter();
+  const router  = useRouter();
 
   useEffect(() => {
     if (state?.ok) {
       formRef.current?.reset();
-      const timer = setTimeout(() => {
-        router.push("/admin/usuarios/gerenciar");
-      }, 10000);
+      const timer = setTimeout(() => router.push("/admin/usuarios/gerenciar"), 10000);
       return () => clearTimeout(timer);
     }
   }, [state?.ok, router]);
@@ -27,85 +25,61 @@ export function CriarContaForm() {
   return (
     <div className="pageLayout">
       <div className={`pageBody ${styles.bodyCenter}`} data-page-body>
-
-        {/* ── Card central ── */}
         <div className={styles.center}>
           <form ref={formRef} action={formAction} className={styles.card}>
 
+            <div className={styles.toolbar}>
+              <button type="button" onClick={() => router.back()} className={styles.backBtn}>
+                ← Voltar
+              </button>
+              <h1 className={styles.title}>Adicionar usuário</h1>
+            </div>
+
             <div className={styles.row}>
               <span className={styles.label}>Nome:</span>
-              <input
-                name="nome_completo"
-                type="text"
-                required
-                autoComplete="name"
-                className={styles.input}
-              />
+              <input name="nome_completo" type="text" required autoComplete="name" className={styles.input} />
             </div>
 
             <div className={styles.row}>
               <span className={styles.label}>Email:</span>
-              <input
-                name="email"
-                type="email"
-                required
-                autoComplete="off"
-                className={styles.input}
-              />
+              <input name="email" type="email" required autoComplete="off" className={styles.input} />
             </div>
 
             <div className={styles.row}>
               <span className={styles.label}>Senha:</span>
-              <input
-                name="password"
-                type="password"
-                required
-                minLength={6}
-                autoComplete="new-password"
-                className={styles.input}
-              />
+              <input name="password" type="password" required minLength={6} autoComplete="new-password" className={styles.input} />
             </div>
 
             <div className={styles.fieldStack}>
               <span className={styles.label}>Tipo de usuário</span>
               <select name="perfil_acesso" required defaultValue="voluntario" className={styles.select}>
                 {USER_TYPES.map((value) => (
-                  <option key={value} value={value}>
-                    {USER_TYPE_LABELS[value]}
-                  </option>
+                  <option key={value} value={value}>{USER_TYPE_LABELS[value]}</option>
                 ))}
               </select>
             </div>
 
-            {state?.message && (
-              <p className={state.ok ? styles.msgOk : styles.msgError} role="status">
-                {state.message}
-                {state.ok && " Redirecionando em 10 segundos…"}
-              </p>
-            )}
+            {state?.message ? (
+              <div className={state.ok ? styles.feedbackOk : styles.feedbackError} role="status">
+                <span className={styles.feedbackIcon}>{state.ok ? "✓" : "✕"}</span>
+                <span>
+                  {state.message}
+                  {state.ok ? " Redirecionando em 10 segundos…" : ""}
+                </span>
+              </div>
+            ) : null}
 
             <div className={styles.actions}>
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className={styles.btnCancel}
-              >
+              <button type="button" onClick={() => router.back()} className={styles.btnCancel}>
                 Cancelar
               </button>
-              <button
-                type="submit"
-                disabled={pending}
-                className={styles.btnSave}
-                style={{ opacity: pending ? 0.75 : 1 }}
-              >
+              <button type="submit" disabled={pending} className={styles.btnSave}>
                 {pending ? "Salvando…" : "Salvar"}
               </button>
             </div>
 
           </form>
         </div>
-
-        {/* ── Sidebar ── */}
         <SidebarActions isAdmin podeAnimal />
       </div>
     </div>

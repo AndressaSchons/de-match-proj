@@ -1,22 +1,24 @@
+/* ── Layout ──────────────────────────────────── */
 .main {
   flex: 1;
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
   width: 100%;
   background: var(--color-white);
   border-radius: var(--radius-lg);
-  padding: 1.5rem 1.75rem;
+  padding: 1.75rem 2rem;
   box-shadow: var(--shadow-card);
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+/* ── Toolbar ─────────────────────────────────── */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .toolbarActions {
@@ -29,35 +31,36 @@
   display: inline;
 }
 
+/* ── Buttons ─────────────────────────────────── */
 .btnGhost {
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: var(--radius-pill);
   border: 1px solid rgba(0, 0, 0, 0.18);
   background: #f3f4f6;
-  color: #111827;
+  color: #374151;
   cursor: pointer;
   font-size: var(--font-size-sm);
   font-weight: 600;
+  transition: background 0.15s, color 0.15s;
 }
-
-.btnGhost:hover {
-  background: #e5e7eb;
-  color: #030712;
-}
+.btnGhost:hover { background: #e5e7eb; color: #030712; }
 
 .btnPrimary {
   display: inline-flex;
-  padding: 8px 18px;
+  align-items: center;
+  padding: 7px 18px;
   border-radius: var(--radius-pill);
   background: var(--color-gold);
   color: var(--color-white);
   font-weight: 600;
   font-size: var(--font-size-sm);
   text-decoration: none;
+  transition: opacity 0.15s;
 }
+.btnPrimary:hover { opacity: 0.88; }
 
 .btnDanger {
-  padding: 8px 16px;
+  padding: 7px 16px;
   border-radius: var(--radius-pill);
   border: none;
   background: #b91c1c;
@@ -65,112 +68,161 @@
   font-weight: 600;
   font-size: var(--font-size-sm);
   cursor: pointer;
+  transition: opacity 0.15s;
 }
+.btnDanger:hover { opacity: 0.85; }
+.btnDanger:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.btnDanger:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
+/* ── Title ───────────────────────────────────── */
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.6rem;
+  font-weight: 800;
   color: #111827;
-  margin: 0 0 1rem;
+  margin: 0 0 1.25rem;
+  letter-spacing: -0.02em;
 }
 
-.hero {
-  margin-bottom: 1rem;
+/* ── Hero card: photo + fields side by side ─── */
+.heroCard {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.5rem;
+  background: #f8f9fb;
+  border: 1px solid rgba(0,0,0,0.07);
   border-radius: var(--radius-md);
-  background: #f3f4f6;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  align-items: start;
+}
+
+.photoWrapper {
+  border-radius: calc(var(--radius-md) - 2px);
+  overflow: hidden;
+  background: #e5e7eb;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
 }
 
 .heroImg {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
-  object-fit: contain;
-  border-radius: var(--radius-md);
+  object-fit: cover;
 }
 
+.photoPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e7eb;
+  color: #9ca3af;
+  font-size: 3rem;
+}
+
+/* ── Fields grid inside hero card ────────────── */
 .dl {
   display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 0.35rem 1rem;
+  grid-template-columns: auto 1fr;
+  gap: 0.45rem 0.75rem;
   font-size: var(--font-size-base);
-  margin: 0 0 1.25rem;
+  margin: 0;
+  align-content: start;
 }
 
 .dl dt {
   color: #6b7280;
   font-weight: 600;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-top: 1px;
 }
 
 .dl dd {
   margin: 0;
   color: #111827;
+  font-weight: 500;
 }
 
+/* ── Adoption term link row ──────────────────── */
+.termRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  grid-column: 1 / -1;
+  margin-top: 0.35rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+.termIcon {
+  flex-shrink: 0;
+  color: #6b7280;
+}
+
+.termLinks {
+  display: flex;
+  gap: 0.75rem;
+  font-size: var(--font-size-sm);
+}
+.termLinks a {
+  color: var(--color-gold, #d97706);
+  font-weight: 600;
+  text-decoration: none;
+}
+.termLinks a:hover { text-decoration: underline; }
+
+/* ── Text blocks (História / Observações) ────── */
 .block {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
+  background: #f8f9fb;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
 }
 
 .blockTitle {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  margin: 0 0 0.35rem;
-  color: #111827;
+  margin: 0 0 0.5rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .blockText {
   margin: 0;
   white-space: pre-wrap;
   color: #374151;
-  line-height: 1.5;
+  line-height: 1.65;
+  font-size: var(--font-size-base);
 }
 
-.msgOk {
-  margin-top: 0.75rem;
-  color: var(--color-success);
-  font-size: var(--font-size-sm);
-}
+/* ── Feedback messages ───────────────────────── */
+.msgOk    { margin-top: 0.75rem; color: var(--color-success); font-size: var(--font-size-sm); }
+.msgError { margin-top: 0.75rem; color: var(--color-error);   font-size: var(--font-size-sm); }
 
-.msgError {
-  margin-top: 0.75rem;
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-}
+/* ── Responsive ──────────────────────────────── */
+@media (max-width: 640px) {
+  .main { max-width: 100%; padding: 1.25rem 1rem; }
 
-@media (max-width: 768px) {
-  .main {
-    max-width: 100%;
-    padding: 1.25rem 1rem;
-  }
-
-  .toolbarActions {
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: flex-end;
-  }
-
-  .btnPrimary,
-  .btnDanger,
-  .btnGhost {
-    min-height: 44px;
-  }
-}
-
-@media (max-width: 480px) {
-  .dl {
+  .heroCard {
     grid-template-columns: 1fr;
-    gap: 0.15rem 0;
+    gap: 1rem;
   }
 
-  .dl dt {
-    margin-top: 0.5rem;
-  }
+  .photoWrapper { aspect-ratio: 16 / 9; }
 
-  .dl dt:first-child {
-    margin-top: 0;
-  }
+  .toolbarActions { flex-wrap: wrap; width: 100%; justify-content: flex-end; }
+
+  .btnPrimary, .btnDanger, .btnGhost { min-height: 44px; }
+}
+
+@media (max-width: 400px) {
+  .dl { grid-template-columns: 1fr; gap: 0.1rem 0; }
+  .dl dt { margin-top: 0.5rem; }
+  .dl dt:first-child { margin-top: 0; }
 }

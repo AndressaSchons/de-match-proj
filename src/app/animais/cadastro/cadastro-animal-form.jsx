@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cadastrarAnimal } from "../actions";
 import { AnimalFormFields } from "../animal-form";
@@ -9,47 +9,72 @@ import styles from "./cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-/**
- * @param {{ isAdmin?: boolean, podeAnimal?: boolean }} props
- */
 export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(cadastrarAnimal, initialState);
-  const formRef = useRef(null);
-  const router = useRouter();
+  const formRef  = useRef(null);
+  const router   = useRouter();
+
+  const [photoUploading, setPhotoUploading] = useState(false);
+  // Incrementar essa key força remontagem do AnimalFormFields → limpa foto
+  const [formKey, setFormKey] = useState(0);
+
+  const onPhotoUploadingChange = useCallback((isUploading) => {
+    setPhotoUploading(isUploading);
+  }, []);
 
   useEffect(() => {
-    if (state?.ok) formRef.current?.reset();
+    if (state?.ok) {
+      formRef.current?.reset();
+      setFormKey((k) => k + 1); // remonta AnimalFormFields, limpando a foto
+    }
   }, [state?.ok]);
+
+  const canSave = !pending && !photoUploading;
+
+  function getSaveLabel() {
+    if (photoUploading) return "Aguardando foto…";
+    if (pending)        return "Salvando…";
+    return "Salvar";
+  }
 
   return (
     <div className="pageLayout">
       <div className="pageBody" data-page-body>
         <form ref={formRef} action={formAction} className={styles.card}>
-          <AnimalFormFields />
+
+          <div className={styles.toolbar}>
+            <button type="button" onClick={() => router.back()} className={styles.backBtn}>
+              ← Voltar
+            </button>
+            <h1 className={styles.cardTitle}>Cadastrar animal</h1>
+          </div>
+
+          <AnimalFormFields
+            key={formKey}
+            onPhotoUploadingChange={onPhotoUploadingChange}
+          />
 
           <div className={styles.actions}>
-            <button
-              type="submit"
-              disabled={pending}
-              className={styles.btnSave}
-              style={{ opacity: pending ? 0.75 : 1 }}
-            >
-              {pending ? "Salvando…" : "Salvar"}
+            <button type="button" className={styles.btnCancel} onClick={() => router.back()}>
+              Cancelar
             </button>
             <button
-              type="button"
-              className={styles.btnCancel}
-              onClick={() => router.back()}
+              type="submit"
+              disabled={!canSave}
+              className={styles.btnSave}
+              title={photoUploading ? "Aguarde o envio da foto antes de salvar" : undefined}
             >
-              Cancelar
+              {getSaveLabel()}
             </button>
           </div>
 
-          {state?.message && (
-            <p className={state.ok ? styles.msgOk : styles.msgError} role="status">
+          {state?.message ? (
+            <div className={state.ok ? styles.feedbackOk : styles.feedbackError} role="status">
+              <span className={styles.feedbackIcon}>{state.ok ? "✓" : "✕"}</span>
               {state.message}
-            </p>
-          )}
+            </div>
+          ) : null}
+
         </form>
 
         <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
