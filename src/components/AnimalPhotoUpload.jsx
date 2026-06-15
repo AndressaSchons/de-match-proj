@@ -74,7 +74,7 @@ export const AnimalPhotoUpload = forwardRef(function AnimalPhotoUpload({ initial
       setUploading(false);
       onUploadingChange?.(false);
     }
-  }, [supabase]);
+  }, [supabase, onUploadingChange]);
 
   const onPickFiles = useCallback((files) => {
     const file = files?.[0];

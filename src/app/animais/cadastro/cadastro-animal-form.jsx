@@ -25,7 +25,9 @@ export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
   useEffect(() => {
     if (state?.ok) {
       formRef.current?.reset();
-      setFormKey((k) => k + 1); // remonta AnimalFormFields, limpando a foto
+      // Remontagem intencional após sucesso do server action (limpa upload de foto).
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset de formulário pós-submit
+      setFormKey((k) => k + 1);
     }
   }, [state?.ok]);
 

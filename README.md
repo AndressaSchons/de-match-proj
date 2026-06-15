@@ -4,10 +4,12 @@ Aplicação web para apoiar uma ONG no **cadastro e acompanhamento de animais**,
 
 ## Acesso
 
-| Ambiente | URL |
-|----------|-----|
+
+| Ambiente                          | URL                                                                    |
+| --------------------------------- | ---------------------------------------------------------------------- |
 | **Hospedagem oficial (produção)** | [https://de-match-proj.vercel.app/](https://de-match-proj.vercel.app/) |
-| **Desenvolvimento local** | [http://localhost:3000](http://localhost:3000) (após `npm run dev`) |
+| **Desenvolvimento local**         | [http://localhost:3000](http://localhost:3000) (após `npm run dev`)    |
+
 
 Na produção, rotas privadas exigem login. Usuários da equipe usam conta criada no Supabase Auth.
 
@@ -27,17 +29,19 @@ O sistema centraliza o dia a dia da ONG em um único lugar:
 
 ## Stack utilizada
 
-| Camada | Tecnologia |
-|--------|------------|
-| Framework front / back (App Router) | [Next.js](https://nextjs.org/) 16 |
-| UI | [React](https://react.dev/) 19 + CSS Modules |
-| Ícones | [react-icons](https://react-icons.github.io/react-icons/) |
-| Banco, autenticação e arquivos | [Supabase](https://supabase.com/) (PostgreSQL, Auth, Storage, RLS) |
-| Hospedagem | [Vercel](https://vercel.com/) |
-| Testes unitários | [Vitest](https://vitest.dev/) |
-| Testes funcionais (E2E) | [Playwright](https://playwright.dev/) |
-| Qualidade web | [Google Lighthouse](https://developer.chrome.com/docs/lighthouse/overview) |
-| Lint | ESLint (eslint-config-next) |
+
+| Camada                              | Tecnologia                                                                 |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| Framework front / back (App Router) | [Next.js](https://nextjs.org/) 16                                          |
+| UI                                  | [React](https://react.dev/) 19 + CSS Modules                               |
+| Ícones                              | [react-icons](https://react-icons.github.io/react-icons/)                  |
+| Banco, autenticação e arquivos      | [Supabase](https://supabase.com/) (PostgreSQL, Auth, Storage, RLS)         |
+| Hospedagem                          | [Vercel](https://vercel.com/)                                              |
+| Testes unitários                    | [Vitest](https://vitest.dev/)                                              |
+| Testes funcionais (E2E)             | [Playwright](https://playwright.dev/)                                      |
+| Qualidade web                       | [Google Lighthouse](https://developer.chrome.com/docs/lighthouse/overview) |
+| Lint                                | ESLint (eslint-config-next)                                                |
+
 
 **Requisito de runtime:** Node.js `>= 20.19.0`
 
@@ -45,11 +49,13 @@ O sistema centraliza o dia a dia da ONG em um único lugar:
 
 ## Perfis de acesso
 
-| Perfil | O que pode fazer (resumo) |
-|--------|---------------------------|
-| **Voluntário** | Cadastrar e editar animais; ver notificações; ver lista e fichas |
-| **Validador** | Tudo do voluntário + métricas de adoção na home + ver termo de adoção |
+
+| Perfil            | O que pode fazer (resumo)                                                               |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| **Voluntário**    | Cadastrar e editar animais; ver notificações; ver lista e fichas                        |
+| **Validador**     | Tudo do voluntário + métricas de adoção na home + ver termo de adoção                   |
 | **Administrador** | Tudo do validador + excluir animal + gerenciar usuários + cadastro de adoção e usuários |
+
 
 Regras detalhadas estão no banco (RLS) e em `src/lib/permissions.js` / `src/lib/animal-constants.js`.
 
@@ -116,12 +122,14 @@ npm install
 
 Copie `.env.example` para `.env` na raiz e preencha:
 
-| Variável | Obrigatória | Uso |
-|----------|-------------|-----|
-| `NEXT_PUBLIC_SUPABASE_URL` | Sim | URL do projeto Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Sim | Chave anon (pública) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Para admin de usuários | Criar/editar usuários no painel admin |
-| `E2E_USER_EMAIL` / `E2E_USER_PASSWORD` | Só para testes E2E | Usuário de teste no Supabase |
+
+| Variável                               | Obrigatória            | Uso                                   |
+| -------------------------------------- | ---------------------- | ------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Sim                    | URL do projeto Supabase               |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`        | Sim                    | Chave anon (pública)                  |
+| `SUPABASE_SERVICE_ROLE_KEY`            | Para admin de usuários | Criar/editar usuários no painel admin |
+| `E2E_USER_EMAIL` / `E2E_USER_PASSWORD` | Só para testes E2E     | Usuário de teste no Supabase          |
+
 
 No **Vercel**, configure as mesmas variáveis em *Project Settings → Environment Variables* (não commite o `.env`).
 
@@ -177,29 +185,31 @@ Sem login válido e buckets configurados, upload falha — confira RLS e `.env` 
 
 ## Scripts npm
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build de produção |
-| `npm run start` | Servidor após build |
-| `npm run lint` | Análise estática (ESLint) |
-| `npm test` | Testes unitários (Vitest) |
-| `npm run test:watch` | Vitest em modo watch |
-| `npm run test:e2e` | Testes funcionais (Playwright) |
+
+| Comando              | Descrição                                              |
+| -------------------- | ------------------------------------------------------ |
+| `npm run dev`        | Servidor de desenvolvimento                            |
+| `npm run build`      | Build de produção                                      |
+| `npm run start`      | Servidor após build                                    |
+| `npm run lint`       | Análise estática (ESLint)                              |
+| `npm test`           | Testes unitários (Vitest)                              |
+| `npm run test:watch` | Vitest em modo watch                                   |
+| `npm run test:e2e`   | Testes funcionais (Playwright)                         |
 | `npm run lighthouse` | Relatório Lighthouse (app rodando em `localhost:3000`) |
+
 
 ---
 
 ## Testes automatizados
 
-Pacote mínimo para documentação acadêmica e garantia de qualidade.
 
-| Tipo | O que verifica | Ferramenta | Comando |
-|------|----------------|------------|---------|
-| **Unitário** | Regras isoladas (notificações, validação de animal, permissões) | Vitest | `npm test` |
-| **Funcional / E2E** | Login e cadastro de animal com notificação na home | Playwright | `npm run test:e2e` |
-| **Qualidade web** | Performance, acessibilidade e boas práticas | Lighthouse | `npm run lighthouse` |
-| **Estático** | Padrões de código | ESLint | `npm run lint` |
+| Tipo                | O que verifica                                                  | Ferramenta | Comando              |
+| ------------------- | --------------------------------------------------------------- | ---------- | -------------------- |
+| **Unitário**        | Regras isoladas (notificações, validação de animal, permissões) | Vitest     | `npm test`           |
+| **Funcional / E2E** | Login e cadastro de animal com notificação na home              | Playwright | `npm run test:e2e`   |
+| **Qualidade web**   | Performance, acessibilidade e boas práticas                     | Lighthouse | `npm run lighthouse` |
+| **Estático**        | Padrões de código                                               | ESLint     | `npm run lint`       |
+
 
 ### Testes unitários
 

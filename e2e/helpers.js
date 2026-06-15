@@ -1,4 +1,38 @@
 // @ts-check
+import { expect } from "@playwright/test";
+
+/** @param {import('@playwright/test').Locator} locator @param {string} value */
+async function fillControlledInput(locator, value) {
+  await locator.waitFor({ state: "visible", timeout: 15_000 });
+  await locator.click();
+  await locator.fill(value);
+  try {
+    await expect(locator).toHaveValue(value, { timeout: 3_000 });
+  } catch {
+    await locator.click();
+    await locator.fill(value);
+    await expect(locator).toHaveValue(value, { timeout: 5_000 });
+  }
+}
+
+/** @param {import('@playwright/test').Response} res */
+function isPasswordGrantTokenRequest(res) {
+  return (
+    res.url().includes("/auth/v1/token") &&
+    res.url().includes("grant_type=password") &&
+    res.request().method() === "POST"
+  );
+}
+
+/** @param {import('@playwright/test').Page} page */
+async function readLoginError(page) {
+  const errorEl = page.getByTestId("login-error");
+  if (await errorEl.isVisible().catch(() => false)) {
+    return (await errorEl.textContent())?.trim() || null;
+  }
+  return null;
+}
+
 /** @param {import('@playwright/test').Page} page */
 export async function loginAsEquipe(page) {
   const email = process.env.E2E_USER_EMAIL?.trim();
@@ -9,25 +43,23 @@ export async function loginAsEquipe(page) {
     );
   }
 
-  await page.goto("/login", { waitUntil: "domcontentloaded" });
-  await page.locator("#login-email").waitFor({ state: "visible", timeout: 15_000 });
-  await page.locator("#login-email").fill(email);
-  await page.locator("#login-password").fill(password);
+  await page.goto("/login", { waitUntil: "load" });
+
+  const emailInput = page.locator("#login-email");
+  const passwordInput = page.locator("#login-password");
+
+  await fillControlledInput(emailInput, email);
+  await fillControlledInput(passwordInput, password);
 
   const [authResponse] = await Promise.all([
-    page.waitForResponse(
-      (res) =>
-        res.url().includes("/auth/v1/token") &&
-        res.request().method() === "POST",
-      { timeout: 25_000 }
-    ),
+    page.waitForResponse(isPasswordGrantTokenRequest, { timeout: 25_000 }),
     page.getByRole("button", { name: "ENTRAR" }).click(),
   ]);
 
   if (!authResponse.ok()) {
-    const err = await page.locator("p.message").first().textContent().catch(() => null);
+    const err = await readLoginError(page);
     throw new Error(
-      err?.trim() ||
+      err ||
         `Login rejeitado pelo Supabase (HTTP ${authResponse.status()}). Verifique e-mail e senha no .env.`
     );
   }

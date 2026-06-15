@@ -24,6 +24,8 @@ export function CadastroAdocaoForm({ animais }) {
   useEffect(() => {
     if (state?.ok) {
       formRef.current?.reset();
+      // Remontagem intencional após sucesso do server action (limpa upload do termo).
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset de formulário pós-submit
       setFormKey((k) => k + 1);
     }
   }, [state?.ok]);

@@ -147,7 +147,11 @@ export default function LoginForm() {
             {loading ? "Salvando…" : "SALVAR"}
           </button>
 
-          {message && <p className={styles.message}>{message}</p>}
+          {message && (
+            <p className={styles.message} data-testid="login-error">
+              {message}
+            </p>
+          )}
         </form>
 
         <p className={styles.footer}>Desenvolvido por IFRS – Colli&apos;s group corporation</p>
@@ -250,7 +254,11 @@ export default function LoginForm() {
           </form>
         )}
 
-        {message && <p className={styles.message}>{message}</p>}
+        {message && (
+          <p className={styles.message} data-testid="login-error">
+            {message}
+          </p>
+        )}
       </div>
 
       <p className={styles.footer}>Desenvolvido por IFRS – Colli&apos;s group corporation</p>
