@@ -2,6 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { MAX_FOTOS } from "@/lib/animal-form-parse";
 import styles from "./AnimalPhotoUpload.module.css";
 
 const BUCKET = "animal-fotos";
@@ -16,42 +17,56 @@ function extFromMime(mime) {
 }
 
 /**
+ * Galeria de fotos do animal. A primeira da lista é a capa (vira `animal.foto`).
+ *
  * Expõe via ref:
  *   - isUploading: boolean  → pai bloqueia o submit enquanto true
- *   - reset()               → pai limpa foto após cadastro bem-sucedido
+ *   - reset()               → pai limpa a galeria após cadastro bem-sucedido
  */
-export const AnimalPhotoUpload = forwardRef(function AnimalPhotoUpload({ initialUrl = null, onUploadingChange }, ref) {
+export const AnimalPhotoUpload = forwardRef(function AnimalPhotoUpload({ initialUrls = [], onUploadingChange }, ref) {
   const supabase     = useMemo(() => createClient(), []);
   const fileInputRef = useRef(null);
-  const [fotoUrl,    setFotoUrl]    = useState(initialUrl ?? "");
-  const [previewSrc, setPreviewSrc] = useState(initialUrl ?? "");
-  const [uploading,  setUploading]  = useState(false);
-  const [error,      setError]      = useState("");
-  const [dragOver,   setDragOver]   = useState(false);
+  const [fotos,     setFotos]     = useState(() => initialUrls.filter(Boolean));
+  const [pendentes, setPendentes] = useState([]); // uploads em andamento: { id, previewSrc }
+  const [error,     setError]     = useState("");
+  const [dragOver,  setDragOver]  = useState(false);
 
+  // `initialUrls` costuma ser um array novo a cada render; a chave serializada evita o loop.
+  const initialKey = JSON.stringify(initialUrls);
   useEffect(() => {
-    setFotoUrl(initialUrl ?? "");
-    setPreviewSrc(initialUrl ?? "");
-  }, [initialUrl]);
+    setFotos(JSON.parse(initialKey).filter(Boolean));
+  }, [initialKey]);
 
-  // Expõe isUploading e reset() para o componente pai
+  const uploading = pendentes.length > 0;
+  const restantes = MAX_FOTOS - fotos.length - pendentes.length;
+
+  // Avisa o pai sempre que o estado de envio muda, para ele travar o botão Salvar.
+  useEffect(() => {
+    onUploadingChange?.(uploading);
+  }, [uploading, onUploadingChange]);
+
   useImperativeHandle(ref, () => ({
     get isUploading() { return uploading; },
     reset() {
-      setFotoUrl("");
-      setPreviewSrc("");
+      setFotos([]);
+      setPendentes((prev) => {
+        prev.forEach((p) => URL.revokeObjectURL(p.previewSrc));
+        return [];
+      });
       setError("");
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
   }), [uploading]);
 
-  const uploadFile = useCallback(async (file) => {
-    setError("");
-    if (!ACCEPT_TYPES.includes(file.type)) { setError("Use JPG, PNG ou WebP."); return; }
-    if (file.size > MAX_BYTES)             { setError("Arquivo muito grande (máx. 5 MB)."); return; }
+  const uploadFile = useCallback(async (file, pendenteId) => {
+    const encerrarPendente = () => {
+      setPendentes((prev) => {
+        const alvo = prev.find((p) => p.id === pendenteId);
+        if (alvo) URL.revokeObjectURL(alvo.previewSrc);
+        return prev.filter((p) => p.id !== pendenteId);
+      });
+    };
 
-    setUploading(true);
-    onUploadingChange?.(true);
     try {
       const { data: { user }, error: authErr } = await supabase.auth.getUser();
       if (authErr || !user) { setError("Entre na conta para enviar a foto."); return; }
@@ -66,83 +81,147 @@ export const AnimalPhotoUpload = forwardRef(function AnimalPhotoUpload({ initial
       if (upErr) { setError(upErr.message); return; }
 
       const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
-      const publicUrl = pub.publicUrl;
-
-      setPreviewSrc((prev) => { if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev); return publicUrl; });
-      setFotoUrl(publicUrl);
+      setFotos((prev) => (prev.includes(pub.publicUrl) ? prev : [...prev, pub.publicUrl]));
     } finally {
-      setUploading(false);
-      onUploadingChange?.(false);
+      encerrarPendente();
     }
-  }, [supabase, onUploadingChange]);
+  }, [supabase]);
 
-  const onPickFiles = useCallback((files) => {
-    const file = files?.[0];
-    if (!file) return;
-    setPreviewSrc((prev) => { if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev); return URL.createObjectURL(file); });
-    void uploadFile(file);
-  }, [uploadFile]);
+  const onPickFiles = useCallback((fileList) => {
+    const arquivos = Array.from(fileList ?? []);
+    if (arquivos.length === 0) return;
 
-  const onInputChange = (e) => { if (e.target.files?.length) onPickFiles(e.target.files); e.target.value = ""; };
-  const onDrop        = (e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) onPickFiles([f]); };
-  const onDragOver    = (e) => { e.preventDefault(); e.stopPropagation(); setDragOver(true); };
-  const onDragLeave   = (e) => { e.preventDefault(); setDragOver(false); };
-  const triggerPick   = () => fileInputRef.current?.click();
+    setError("");
+    const aceitos = [];
+    let recusouTipo = false;
+    let recusouTamanho = false;
+    let estourouLimite = false;
+
+    for (const file of arquivos) {
+      if (!ACCEPT_TYPES.includes(file.type)) { recusouTipo = true; continue; }
+      if (file.size > MAX_BYTES)             { recusouTamanho = true; continue; }
+      if (aceitos.length >= restantes)       { estourouLimite = true; break; }
+      aceitos.push(file);
+    }
+
+    if (recusouTipo)     setError("Use JPG, PNG ou WebP.");
+    else if (recusouTamanho) setError("Arquivo muito grande (máx. 5 MB).");
+    else if (estourouLimite) setError(`Máximo de ${MAX_FOTOS} fotos por animal.`);
+
+    for (const file of aceitos) {
+      const id = crypto.randomUUID();
+      setPendentes((prev) => [...prev, { id, previewSrc: URL.createObjectURL(file) }]);
+      void uploadFile(file, id);
+    }
+  }, [restantes, uploadFile]);
+
+  const removerFoto = useCallback((url) => {
+    setFotos((prev) => prev.filter((f) => f !== url));
+    setError("");
+  }, []);
+
+  const definirCapa = useCallback((url) => {
+    setFotos((prev) => [url, ...prev.filter((f) => f !== url)]);
+  }, []);
+
+  const podeAdicionar = restantes > 0;
+  const triggerPick   = () => { if (podeAdicionar) fileInputRef.current?.click(); };
+
+  const onInputChange = (e) => { onPickFiles(e.target.files); e.target.value = ""; };
 
   const dropHandlers = {
-    onDrop, onDragOver, onDragLeave,
-    role: "button", tabIndex: 0,
-    onKeyDown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); triggerPick(); } },
-    onClick: triggerPick,
+    onDrop:      (e) => { e.preventDefault(); setDragOver(false); onPickFiles(e.dataTransfer.files); },
+    onDragOver:  (e) => { e.preventDefault(); e.stopPropagation(); setDragOver(true); },
+    onDragLeave: (e) => { e.preventDefault(); setDragOver(false); },
+    onClick:     triggerPick,
+    onKeyDown:   (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); triggerPick(); } },
+    role: "button",
+    tabIndex: 0,
   };
 
-  const hasPhoto = Boolean(previewSrc);
+  const vazio = fotos.length === 0 && pendentes.length === 0;
 
   return (
     <div className={styles.wrap}>
-      <input type="hidden" name="foto" value={fotoUrl} readOnly />
+      {fotos.map((url) => (
+        <input key={url} type="hidden" name="fotos" value={url} readOnly />
+      ))}
 
-      {hasPhoto ? (
-        <div className={`${styles.compact} ${dragOver ? styles.dragOver : ""} ${uploading ? styles.compactUploading : ""}`} {...dropHandlers}>
-          <div className={styles.compactImgWrap}>
-            <img src={previewSrc} alt="" className={styles.compactImg} />
-            {uploading && <div className={styles.compactSpinner} />}
-          </div>
-          <div className={styles.compactInfo}>
-            <span className={styles.compactLabel}>
-              {uploading ? "Enviando foto…" : "Foto atual"}
-            </span>
-            <span className={styles.compactHint}>
-              {uploading ? "Aguarde antes de salvar" : "Arraste ou clique para trocar"}
-            </span>
-          </div>
-          {!uploading && (
-            <button
-              type="button"
-              className={styles.compactBtn}
-              onClick={(e) => { e.stopPropagation(); triggerPick(); }}
-            >
-              Trocar
-            </button>
-          )}
-        </div>
-      ) : (
+      {vazio ? (
         <div className={`${styles.dropzone} ${dragOver ? styles.dragOver : ""}`} {...dropHandlers}>
-          <p className={styles.hint}>Arraste uma imagem ou escolha um arquivo (JPG, PNG ou WebP, até 5 MB).</p>
+          <p className={styles.hint}>
+            Arraste imagens ou escolha arquivos (JPG, PNG ou WebP, até 5 MB cada; máx. {MAX_FOTOS} fotos).
+          </p>
           <button
             type="button"
             className={styles.btnFile}
-            disabled={uploading}
             onClick={(e) => { e.stopPropagation(); triggerPick(); }}
           >
-            {uploading ? "Enviando…" : "Escolher arquivo"}
+            Escolher arquivos
           </button>
         </div>
+      ) : (
+        <>
+          <ul className={styles.grid}>
+            {fotos.map((url, i) => (
+              <li key={url} className={styles.tile}>
+                <img src={url} alt="" className={styles.tileImg} />
+                {i === 0 ? <span className={styles.capaBadge}>Capa</span> : null}
+                <div className={styles.tileActions}>
+                  {i === 0 ? null : (
+                    <button
+                      type="button"
+                      className={styles.tileBtn}
+                      title="Usar como capa"
+                      onClick={() => definirCapa(url)}
+                    >
+                      Capa
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    className={`${styles.tileBtn} ${styles.tileBtnDanger}`}
+                    title="Remover foto"
+                    aria-label="Remover foto"
+                    onClick={() => removerFoto(url)}
+                  >
+                    ✕
+                  </button>
+                </div>
+              </li>
+            ))}
+
+            {pendentes.map((p) => (
+              <li key={p.id} className={`${styles.tile} ${styles.tilePendente}`}>
+                <img src={p.previewSrc} alt="" className={styles.tileImg} />
+                <div className={styles.tileSpinner} />
+              </li>
+            ))}
+
+            {podeAdicionar ? (
+              <li
+                className={`${styles.tile} ${styles.tileAdd} ${dragOver ? styles.dragOver : ""}`}
+                aria-label="Adicionar fotos"
+                {...dropHandlers}
+              >
+                <span className={styles.tileAddIcon}>+</span>
+                <span className={styles.tileAddLabel}>Adicionar</span>
+              </li>
+            ) : null}
+          </ul>
+
+          <p className={styles.gridHint}>
+            {uploading
+              ? "Enviando fotos… aguarde antes de salvar."
+              : `A primeira foto é a capa. ${fotos.length} de ${MAX_FOTOS} usadas.`}
+          </p>
+        </>
       )}
 
       <input
         ref={fileInputRef}
         type="file"
+        multiple
         accept="image/jpeg,image/png,image/webp"
         className={styles.hiddenInput}
         aria-hidden

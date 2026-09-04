@@ -84,9 +84,9 @@ Regras detalhadas estão no banco (RLS) e em `src/lib/permissions.js` / `src/lib
 - **Edição** (`/animais/[id]/editar`): mesmos campos do cadastro.
 - **Exclusão:** somente administrador.
 
-### Adoções (admin)
+### Adoções (admin e validador)
 
-- **Cadastrar adoção** (`/admin/adocoes/cadastro`): vincula adotante, animal e termo (PDF/imagem no bucket `adocao-termos`); marca o animal como adotado.
+- **Cadastrar adoção** (`/adocoes/cadastro`): animal, data em que a adoção ocorreu e termo (PDF/imagem no bucket `adocao-termos`); marca o animal como adotado.
 
 ### Administração de usuários (admin)
 

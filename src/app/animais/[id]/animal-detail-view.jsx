@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { excluirAnimal } from "../actions";
+import { normalizarFotos } from "../animal-map";
 import { DISPONIBILIDADE } from "@/lib/animal-constants";
 import { SidebarActions } from "@/components/SidebarActions";
 import styles from "./animal-detail-view.module.css";
@@ -14,9 +15,13 @@ function labelDisponibilidade(value) {
   return DISPONIBILIDADE.find((d) => d.value === value)?.label ?? value ?? "—";
 }
 
-export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, isAdmin, termoAdocaoUrl }) {
+export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, podeAdocao, isAdmin, termoAdocaoUrl, dataAdocao }) {
   const router = useRouter();
   const [delState, delAction, delPending] = useActionState(excluirAnimal, initialState);
+
+  const fotos = useMemo(() => normalizarFotos(animal), [animal]);
+  const [fotoAtiva, setFotoAtiva] = useState(0);
+  const fotoPrincipal = fotos[fotoAtiva] ?? fotos[0] ?? null;
 
   function confirmDelete(e) {
     if (!confirm("Excluir este animal permanentemente?")) {
@@ -56,19 +61,46 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
 
           {/* ── Hero card: photo + fields side by side ─ */}
           <div className={styles.heroCard}>
-            {/* Photo */}
-            <div className={styles.photoWrapper}>
-              {animal.foto ? (
-                <img src={animal.foto} alt={animal.nome_animal} className={styles.heroImg} />
-              ) : (
-                <div className={styles.photoPlaceholder}>🐾</div>
-              )}
+            {/* Photos */}
+            <div className={styles.gallery}>
+              <div className={styles.photoWrapper}>
+                {fotoPrincipal ? (
+                  <img src={fotoPrincipal} alt={animal.nome_animal} className={styles.heroImg} />
+                ) : (
+                  <div className={styles.photoPlaceholder}>🐾</div>
+                )}
+              </div>
+
+              {fotos.length > 1 ? (
+                <ul className={styles.thumbs}>
+                  {fotos.map((url, i) => (
+                    <li key={url}>
+                      <button
+                        type="button"
+                        className={`${styles.thumbBtn} ${i === fotoAtiva ? styles.thumbBtnAtivo : ""}`}
+                        aria-label={`Ver foto ${i + 1} de ${fotos.length}`}
+                        aria-current={i === fotoAtiva}
+                        onClick={() => setFotoAtiva(i)}
+                      >
+                        <img src={url} alt="" className={styles.thumbImg} />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
 
             {/* Fields */}
             <dl className={styles.dl}>
               <dt>Situação</dt>
               <dd>{labelDisponibilidade(animal.disponibilidade)}</dd>
+
+              {dataAdocao ? (
+                <>
+                  <dt>Data da adoção</dt>
+                  <dd>{String(dataAdocao).slice(0, 10).split("-").reverse().join("/")}</dd>
+                </>
+              ) : null}
 
               <dt>Sexo</dt>
               <dd>{animal.sexo === "macho" ? "Macho" : animal.sexo === "femea" ? "Fêmea" : "—"}</dd>
@@ -148,7 +180,7 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
 
         </main>
 
-        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
       </div>
     </div>
   );

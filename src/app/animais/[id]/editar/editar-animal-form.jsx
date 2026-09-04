@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { atualizarAnimal } from "../../actions";
@@ -10,9 +10,20 @@ import styles from "../../cadastro/cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, podeAnimal = true }) {
+export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, podeAdocao, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(atualizarAnimal, initialState);
   const router = useRouter();
+
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const onPhotoUploadingChange = useCallback((isUploading) => {
+    setPhotoUploading(isUploading);
+  }, []);
+
+  function getSaveLabel() {
+    if (photoUploading) return "Aguardando fotos…";
+    if (pending)        return "Salvando…";
+    return "Salvar alterações";
+  }
 
   return (
     <div className="pageLayout">
@@ -27,7 +38,11 @@ export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, pod
             <h1 className={styles.cardTitle}>Editar animal</h1>
           </div>
 
-          <AnimalFormFields idAnimal={idAnimal} defaultValues={defaultValues} />
+          <AnimalFormFields
+            idAnimal={idAnimal}
+            defaultValues={defaultValues}
+            onPhotoUploadingChange={onPhotoUploadingChange}
+          />
 
           <div className={styles.actions}>
             <button
@@ -39,10 +54,11 @@ export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, pod
             </button>
             <button
               type="submit"
-              disabled={pending}
+              disabled={pending || photoUploading}
               className={styles.btnSave}
+              title={photoUploading ? "Aguarde o envio das fotos antes de salvar" : undefined}
             >
-              {pending ? "Salvando…" : "Salvar alterações"}
+              {getSaveLabel()}
             </button>
           </div>
 
@@ -53,7 +69,7 @@ export function EditarAnimalForm({ idAnimal, defaultValues, isAdmin = false, pod
           ) : null}
         </form>
 
-        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
       </div>
     </div>
   );

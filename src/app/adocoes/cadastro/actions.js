@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { resolveFormData } from "@/lib/resolve-form-data";
+import { podeCadastrarAdocao } from "@/lib/permissions";
 
 function normalizeDbErrorMessage(error) {
   const msg = String(error?.message ?? "");
@@ -15,7 +16,7 @@ function normalizeDbErrorMessage(error) {
   return msg || "Erro inesperado.";
 }
 
-async function requireAdminSession(supabase) {
+async function requireAdocaoSession(supabase) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -30,8 +31,8 @@ async function requireAdminSession(supabase) {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (perfilRow?.perfil_acesso !== "administrador") {
-    return { ok: false, message: "Apenas administradores podem cadastrar adoções.", user: null };
+  if (!podeCadastrarAdocao(perfilRow?.perfil_acesso)) {
+    return { ok: false, message: "Seu perfil não pode cadastrar adoções.", user: null };
   }
 
   return { ok: true, message: "", user };
@@ -40,7 +41,7 @@ async function requireAdminSession(supabase) {
 function revalidateAdocaoPaths(idAnimal) {
   revalidatePath("/");
   revalidatePath("/animais");
-  revalidatePath("/admin/adocoes/cadastro");
+  revalidatePath("/adocoes/cadastro");
   if (idAnimal != null) {
     revalidatePath(`/animais/${idAnimal}`);
     revalidatePath(`/animais/${idAnimal}/editar`);
@@ -59,6 +60,15 @@ export async function cadastrarAdocao(prevOrFormData, maybeFormData) {
     return { ok: false, message: "Selecione um animal válido." };
   }
 
+  const dataAdocaoRaw = String(formData.get("data_adocao") ?? "").trim();
+  if (!dataAdocaoRaw || Number.isNaN(new Date(dataAdocaoRaw).getTime())) {
+    return { ok: false, message: "Informe a data em que o animal foi adotado." };
+  }
+  const hoje = new Date().toISOString().slice(0, 10);
+  if (dataAdocaoRaw > hoje) {
+    return { ok: false, message: "A data da adoção não pode ser no futuro." };
+  }
+
   const anexoUrl = String(formData.get("termo_adocao_anexo_url") ?? "").trim();
 
   if (anexoUrl && !/^https?:\/\//i.test(anexoUrl)) {
@@ -72,13 +82,14 @@ export async function cadastrarAdocao(prevOrFormData, maybeFormData) {
   const termo_adocao = anexoUrl;
 
   const supabase = await createClient();
-  const admin = await requireAdminSession(supabase);
-  if (!admin.ok) return { ok: false, message: admin.message };
+  const sessao = await requireAdocaoSession(supabase);
+  if (!sessao.ok) return { ok: false, message: sessao.message };
 
   const { error: insertError } = await supabase.from("adocao").insert({
     id_animal: idNum,
-    id_usuario: admin.user.id,
+    id_usuario: sessao.user.id,
     termo_adocao,
+    data_adocao: dataAdocaoRaw,
   });
 
   if (insertError) {
@@ -100,4 +111,3 @@ export async function cadastrarAdocao(prevOrFormData, maybeFormData) {
   revalidateAdocaoPaths(idNum);
   return { ok: true, message: "Adoção cadastrada e animal marcado como adotado." };
 }
-

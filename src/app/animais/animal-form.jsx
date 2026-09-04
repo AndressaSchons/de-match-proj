@@ -26,10 +26,10 @@ export const AnimalFormFields = forwardRef(function AnimalFormFields(
       </div>
 
       <div className={`${styles.row} ${styles.rowAlignStart}`}>
-        <span className={styles.label}>Foto:</span>
+        <span className={styles.label}>Fotos:</span>
         <AnimalPhotoUpload
           ref={photoRef}
-          initialUrl={d.foto ?? null}
+          initialUrls={d.fotos ?? []}
           onUploadingChange={onPhotoUploadingChange}
         />
       </div>

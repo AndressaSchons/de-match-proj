@@ -9,7 +9,7 @@ import styles from "./cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
+export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(cadastrarAnimal, initialState);
   const formRef  = useRef(null);
   const router   = useRouter();
@@ -34,7 +34,7 @@ export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
   const canSave = !pending && !photoUploading;
 
   function getSaveLabel() {
-    if (photoUploading) return "Aguardando foto…";
+    if (photoUploading) return "Aguardando fotos…";
     if (pending)        return "Salvando…";
     return "Salvar";
   }
@@ -64,7 +64,7 @@ export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
               type="submit"
               disabled={!canSave}
               className={styles.btnSave}
-              title={photoUploading ? "Aguarde o envio da foto antes de salvar" : undefined}
+              title={photoUploading ? "Aguarde o envio das fotos antes de salvar" : undefined}
             >
               {getSaveLabel()}
             </button>
@@ -79,7 +79,7 @@ export function CadastroAnimalForm({ isAdmin = false, podeAnimal = true }) {
 
         </form>
 
-        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
       </div>
     </div>
   );

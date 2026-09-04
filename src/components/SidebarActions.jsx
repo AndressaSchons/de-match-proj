@@ -14,10 +14,10 @@ const BUTTONS = /** @type {const} */ ([
     color: "green",
   },
   {
-    scope: "admin",
+    scope: "adocao",
     label: "Cadastrar\nadoção",
     Icon: FaFileCirclePlus,
-    href: "/admin/adocoes/cadastro",
+    href: "/adocoes/cadastro",
     color: "green",
   },
   {
@@ -44,20 +44,24 @@ function isPetFlowPathname(pathname) {
 /**
  * Barra lateral de atalhos. Escopos:
  * - `pet`: cadastro de animal — exige `podeAnimal`
+ * - `adocao`: cadastro de adoção — exige `podeAdocao` (administrador ou validador)
  * - `admin`: rotas sob `/admin` — exige `isAdmin`
  *
  * @param {object} props
  * @param {boolean} [props.podeAnimal=true] — perfis que podem cadastrar animal
+ * @param {boolean} [props.podeAdocao] — perfis que podem cadastrar adoção (padrão: mesmo valor de `isAdmin`)
  * @param {boolean} [props.isAdmin=false] — administrador (usuários / futuras rotas admin na barra)
  */
-export function SidebarActions({ podeAnimal = true, isAdmin = false }) {
+export function SidebarActions({ podeAnimal = true, podeAdocao, isAdmin = false }) {
   const pathname = usePathname();
   const petFlow = isPetFlowPathname(pathname);
+  const podeAdocaoResolved = podeAdocao ?? isAdmin;
 
   return (
     <aside className={styles.sidebar}>
       {BUTTONS.map(({ scope, label, Icon, href, color }) => {
         if (scope === "pet" && !podeAnimal) return null;
+        if (scope === "adocao" && !podeAdocaoResolved) return null;
         if (scope === "admin" && !isAdmin) return null;
 
         const isActive = href === "/animais/cadastro" ? petFlow : pathname === href;

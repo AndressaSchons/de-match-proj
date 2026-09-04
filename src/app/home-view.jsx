@@ -10,6 +10,7 @@ import styles from "./home-view.module.css";
 export default function HomeView({
   animais,
   podeAnimal,
+  podeAdocao,
   isAdmin,
   metricas = null,
   notificacoesNovos = [],
@@ -85,7 +86,7 @@ export default function HomeView({
         </main>
 
         {/* ── Direita: Ações — sem active, nenhum botão destacado ── */}
-        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
       </div>
     </div>
   );

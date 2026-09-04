@@ -20,7 +20,6 @@ function campoVazio(value) {
  *   data_nascimento?: string | null,
  *   raca?: string | null,
  *   descricao_historia?: string | null,
- *   vacinacao?: string | null,
  *   localizacao?: string | null,
  * }} row
  */
@@ -32,7 +31,6 @@ export function isAnimalCadastroIncompleto(row) {
     campoVazio(row.data_nascimento) ||
     campoVazio(row.raca) ||
     campoVazio(row.descricao_historia) ||
-    campoVazio(row.vacinacao) ||
     campoVazio(row.localizacao)
   );
 }

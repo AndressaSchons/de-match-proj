@@ -9,7 +9,11 @@ import styles from "./cadastro-adocao-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-export function CadastroAdocaoForm({ animais }) {
+function hoje() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+export function CadastroAdocaoForm({ animais, isAdmin = false, podeAnimal = true }) {
   const [state, formAction, pending] = useActionState(cadastrarAdocao, initialState);
   const formRef  = useRef(null);
   const router   = useRouter();
@@ -75,6 +79,21 @@ export function CadastroAdocaoForm({ animais }) {
               </select>
             </div>
 
+            {/* ── Data da adoção ── */}
+            <div className={styles.fieldStack}>
+              <label className={styles.label} htmlFor="data_adocao">Data da adoção</label>
+              <input
+                id="data_adocao"
+                name="data_adocao"
+                type="date"
+                required
+                disabled={pending}
+                max={hoje()}
+                defaultValue={hoje()}
+                className={styles.select}
+              />
+            </div>
+
             {/* ── Termo ── */}
             <div className={styles.fieldStack}>
               <label className={styles.label} htmlFor="termo_anexo_url_fake">
@@ -114,7 +133,7 @@ export function CadastroAdocaoForm({ animais }) {
           </form>
         </div>
 
-        <SidebarActions isAdmin podeAnimal />
+        <SidebarActions isAdmin={isAdmin} podeAnimal={podeAnimal} podeAdocao />
       </div>
     </div>
   );

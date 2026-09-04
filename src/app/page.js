@@ -11,7 +11,7 @@ import {
   LIMITE_NOVOS_ANIMAL,
   LOTE_BUSCA_INCOMPLETOS,
 } from "@/lib/notificacoes-animais";
-import { isAdministrador, podeVerMetricasAdocao } from "@/lib/permissions";
+import { isAdministrador, podeCadastrarAdocao, podeVerMetricasAdocao } from "@/lib/permissions";
 import HomeView from "./home-view";
 
 export const metadata = {
@@ -63,12 +63,13 @@ export default async function HomePage() {
   const notificacoesIncompletos = buildNotificacoesIncompletos(incompletos);
 
   const podeAnimal = podeCadastrarAnimal(perfil?.perfil_acesso);
+  const podeAdocao = podeCadastrarAdocao(perfil?.perfil_acesso);
   const isAdmin = isAdministrador(perfil?.perfil_acesso);
 
   let metricas = null;
   if (podeVerMetricasAdocao(perfil?.perfil_acesso)) {
-    const { data: adocoes } = await supabase.from("adocao").select("data_operacao");
-    const datas = (adocoes ?? []).map((a) => a.data_operacao);
+    const { data: adocoes } = await supabase.from("adocao").select("data_operacao, data_adocao");
+    const datas = (adocoes ?? []).map((a) => a.data_adocao ?? a.data_operacao);
     metricas = aggregateAdocaoMetrics(datas);
   }
 
@@ -76,6 +77,7 @@ export default async function HomePage() {
     <HomeView
       animais={animais ?? []}
       podeAnimal={podeAnimal}
+      podeAdocao={podeAdocao}
       isAdmin={isAdmin}
       metricas={metricas}
       notificacoesNovos={notificacoesNovos}

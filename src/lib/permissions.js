@@ -14,3 +14,8 @@ export function isAdministrador(perfilAcesso) {
 export function podeVerMetricasAdocao(perfilAcesso) {
   return perfilAcesso === "administrador" || perfilAcesso === "validador";
 }
+
+/** Cadastrar adoção: administrador e validador. */
+export function podeCadastrarAdocao(perfilAcesso) {
+  return perfilAcesso === "administrador" || perfilAcesso === "validador";
+}

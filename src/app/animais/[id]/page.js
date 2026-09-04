@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { podeCadastrarAnimal, podeExcluirAnimal } from "@/lib/animal-constants";
-import { isAdministrador } from "@/lib/permissions";
+import { isAdministrador, podeCadastrarAdocao } from "@/lib/permissions";
 import { AnimalDetailView } from "./animal-detail-view";
 
 export async function generateMetadata({ params }) {
@@ -43,13 +43,15 @@ export default async function AnimalDetailPage({ params }) {
   const isValidador = perfilAcesso === "validador";
 
   let termoAdocaoUrl = null;
+  let dataAdocao = null;
   if (animal.disponibilidade === "adotado" && (isAdmin || isValidador)) {
     const { data: adocao } = await supabase
       .from("adocao")
-      .select("termo_adocao")
+      .select("termo_adocao, data_adocao")
       .eq("id_animal", idNum)
       .maybeSingle();
     termoAdocaoUrl = adocao?.termo_adocao ?? null;
+    dataAdocao = adocao?.data_adocao ?? null;
   }
 
   return (
@@ -58,8 +60,10 @@ export default async function AnimalDetailPage({ params }) {
       podeEditar={podeCadastrarAnimal(perfil?.perfil_acesso)}
       podeExcluir={podeExcluirAnimal(perfil?.perfil_acesso)}
       podeAnimal={podeCadastrarAnimal(perfil?.perfil_acesso)}
+      podeAdocao={podeCadastrarAdocao(perfil?.perfil_acesso)}
       isAdmin={isAdmin}
       termoAdocaoUrl={termoAdocaoUrl}
+      dataAdocao={dataAdocao}
     />
   );
 }

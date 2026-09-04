@@ -23,7 +23,12 @@ describe("isAnimalCadastroIncompleto", () => {
 
   it("retorna true quando falta pelo menos um campo", () => {
     expect(isAnimalCadastroIncompleto({ ...animalCompleto, foto: null })).toBe(true);
-    expect(isAnimalCadastroIncompleto({ ...animalCompleto, vacinacao: "" })).toBe(true);
+    expect(isAnimalCadastroIncompleto({ ...animalCompleto, localizacao: "" })).toBe(true);
+  });
+
+  it("ignora vacinação: cadastro sem esse campo não é considerado incompleto", () => {
+    expect(isAnimalCadastroIncompleto({ ...animalCompleto, vacinacao: "" })).toBe(false);
+    expect(isAnimalCadastroIncompleto({ ...animalCompleto, vacinacao: null })).toBe(false);
   });
 });
 

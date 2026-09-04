@@ -9,6 +9,27 @@ function strOrNull(v) {
   return s === "" ? null : s;
 }
 
+/** Máximo de fotos por animal (o formulário também limita). */
+export const MAX_FOTOS = 8;
+
+/**
+ * Lê os campos `fotos` do FormData: limpa vazios, remove repetidas e corta no limite.
+ * @param {FormData} formData
+ * @returns {string[]}
+ */
+export function parseFotos(formData) {
+  const vistas = new Set();
+  const fotos = [];
+  for (const raw of formData.getAll("fotos")) {
+    const url = String(raw ?? "").trim();
+    if (url === "" || vistas.has(url)) continue;
+    vistas.add(url);
+    fotos.push(url);
+    if (fotos.length >= MAX_FOTOS) break;
+  }
+  return fotos;
+}
+
 function parseCastrado(raw) {
   const s = String(raw ?? "").trim().toLowerCase();
   if (s === "sim" || s === "on" || s === "true") return true;
@@ -33,14 +54,18 @@ export function animalRowFromFormData(formData) {
   const dataNascRaw = String(formData.get("data_nascimento") ?? "").trim();
   const data_nascimento = dataNascRaw === "" ? null : dataNascRaw;
 
+  // A capa é sempre a primeira da galeria; `foto` continua alimentando cards e listagens.
+  const fotos = parseFotos(formData);
+
   return {
+    fotos,
+    foto: fotos[0] ?? null,
     nome_animal,
     disponibilidade,
     sexo,
     porte,
     data_nascimento,
     raca: strOrNull(formData.get("raca")),
-    foto: strOrNull(formData.get("foto")),
     descricao_historia: strOrNull(formData.get("descricao_historia")),
     castrado: parseCastrado(formData.get("castrado")),
     vacinacao: strOrNull(formData.get("vacinacao")),

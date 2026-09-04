@@ -30,7 +30,7 @@ function toggle(set, value) {
   return next;
 }
 
-export default function AnimaisListView({ animais, podeAnimal, isAdmin }) {
+export default function AnimaisListView({ animais, podeAnimal, podeAdocao, isAdmin }) {
   const [busca, setBusca]         = useState("");
   const [situacoes, setSituacoes] = useState(new Set());
   const [sexos, setSexos]         = useState(new Set());
@@ -185,7 +185,7 @@ export default function AnimaisListView({ animais, podeAnimal, isAdmin }) {
           </div>
         </main>
 
-        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
       </div>
     </div>
   );
