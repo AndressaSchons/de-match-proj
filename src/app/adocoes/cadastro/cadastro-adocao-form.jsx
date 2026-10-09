@@ -97,7 +97,7 @@ export function CadastroAdocaoForm({ animais, isAdmin = false, podeAnimal = true
             {/* ── Termo ── */}
             <div className={styles.fieldStack}>
               <label className={styles.label} htmlFor="termo_anexo_url_fake">
-                Termo de adoção (PDF ou imagem)
+                Termo de adoção (PDF ou imagem) — opcional
               </label>
               <div id="termo_anexo_url_fake" aria-label="Upload do termo de adoção">
                 <AdocaoTermoUpload

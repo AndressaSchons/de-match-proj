@@ -7,6 +7,7 @@ import { excluirAnimal } from "../actions";
 import { normalizarFotos } from "../animal-map";
 import { DISPONIBILIDADE } from "@/lib/animal-constants";
 import { SidebarActions } from "@/components/SidebarActions";
+import { AnexarTermoForm } from "./anexar-termo-form";
 import styles from "./animal-detail-view.module.css";
 
 const initialState = { ok: undefined, message: "" };
@@ -15,7 +16,7 @@ function labelDisponibilidade(value) {
   return DISPONIBILIDADE.find((d) => d.value === value)?.label ?? value ?? "—";
 }
 
-export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, podeAdocao, isAdmin, termoAdocaoUrl, dataAdocao }) {
+export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, podeAdocao, isAdmin, termoAdocaoUrl, dataAdocao, aguardandoTermo = false }) {
   const router = useRouter();
   const [delState, delAction, delPending] = useActionState(excluirAnimal, initialState);
 
@@ -151,9 +152,19 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
                     <a href={termoAdocaoUrl} download>Baixar</a>
                   </span>
                 </dd>
+              ) : aguardandoTermo ? (
+                <dd className={styles.termRow}>
+                  <span className={styles.termPending} role="status">
+                    <span aria-hidden="true">⏳</span>
+                    Aguardando termo de adoção
+                  </span>
+                </dd>
               ) : null}
             </dl>
           </div>
+
+          {/* ── Anexar termo pendente ─────────────────── */}
+          {aguardandoTermo && podeAdocao ? <AnexarTermoForm idAnimal={animal.id_animal} /> : null}
 
           {/* ── História ──────────────────────────────── */}
           {animal.descricao_historia ? (

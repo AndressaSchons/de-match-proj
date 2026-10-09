@@ -86,7 +86,7 @@ Regras detalhadas estão no banco (RLS) e em `src/lib/permissions.js` / `src/lib
 
 ### Adoções (admin e validador)
 
-- **Cadastrar adoção** (`/adocoes/cadastro`): animal, data em que a adoção ocorreu e termo (PDF/imagem no bucket `adocao-termos`); marca o animal como adotado.
+- **Cadastrar adoção** (`/adocoes/cadastro`): animal, data em que a adoção ocorreu e termo opcional (PDF/imagem no bucket `adocao-termos`); marca o animal como adotado. Sem termo, a ficha exibe "Aguardando termo de adoção".
 
 ### Administração de usuários (admin)
 
@@ -145,6 +145,7 @@ No **SQL Editor**, na ordem:
 Scripts auxiliares (se necessário):
 
 - `corrigir_trigger_primeiro_admin.sql` — erro ao definir primeiro admin.
+- `adocao_termo_opcional.sql` — bancos já criados: permite cadastrar adoção sem termo (`termo_adocao` aceita NULL).
 - `atualizar_rls_animal_voluntario.sql` — banco antigo sem permissão de voluntário em `animal`.
 
 ### 4. Primeiro administrador

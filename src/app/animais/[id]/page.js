@@ -44,6 +44,7 @@ export default async function AnimalDetailPage({ params }) {
 
   let termoAdocaoUrl = null;
   let dataAdocao = null;
+  let aguardandoTermo = false;
   if (animal.disponibilidade === "adotado" && (isAdmin || isValidador)) {
     const { data: adocao } = await supabase
       .from("adocao")
@@ -52,6 +53,7 @@ export default async function AnimalDetailPage({ params }) {
       .maybeSingle();
     termoAdocaoUrl = adocao?.termo_adocao ?? null;
     dataAdocao = adocao?.data_adocao ?? null;
+    aguardandoTermo = Boolean(adocao) && !termoAdocaoUrl;
   }
 
   return (
@@ -64,6 +66,7 @@ export default async function AnimalDetailPage({ params }) {
       isAdmin={isAdmin}
       termoAdocaoUrl={termoAdocaoUrl}
       dataAdocao={dataAdocao}
+      aguardandoTermo={aguardandoTermo}
     />
   );
 }

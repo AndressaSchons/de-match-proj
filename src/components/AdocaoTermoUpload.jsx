@@ -22,9 +22,9 @@ function isImageMime(mime) {
 
 /**
  * Upload do termo para Supabase Storage + hidden `name="termo_anexo_url"` com URL pública.
- * @param {{ initialUrl?: string | null }} props
+ * @param {{ initialUrl?: string | null, onUploadingChange?: (uploading: boolean) => void }} props
  */
-export function AdocaoTermoUpload({ initialUrl = null }) {
+export function AdocaoTermoUpload({ initialUrl = null, onUploadingChange }) {
   const supabase = useMemo(() => createClient(), []);
   const fileInputRef = useRef(null);
   const [url, setUrl] = useState(initialUrl ?? "");
@@ -39,6 +39,10 @@ export function AdocaoTermoUpload({ initialUrl = null }) {
     setPreviewSrc("");
     setIsPdf(Boolean(initialUrl?.toLowerCase().includes(".pdf")));
   }, [initialUrl]);
+
+  useEffect(() => {
+    onUploadingChange?.(uploading);
+  }, [uploading, onUploadingChange]);
 
   const uploadFile = useCallback(
     async (file) => {

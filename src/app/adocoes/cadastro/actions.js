@@ -48,6 +48,50 @@ function revalidateAdocaoPaths(idAnimal) {
   }
 }
 
+/** Anexa o termo a uma adoção já cadastrada que está "Aguardando termo de adoção". */
+export async function anexarTermoAdocao(prevOrFormData, maybeFormData) {
+  const formData = resolveFormData(prevOrFormData, maybeFormData);
+  if (!formData) {
+    return { ok: false, message: "Requisição inválida." };
+  }
+
+  const idRaw = String(formData.get("id_animal") ?? "").trim();
+  const idNum = Number(idRaw);
+  if (!idRaw || !Number.isFinite(idNum) || idNum <= 0) {
+    return { ok: false, message: "Animal inválido." };
+  }
+
+  const anexoUrl = String(formData.get("termo_adocao_anexo_url") ?? "").trim();
+  if (!anexoUrl) {
+    return { ok: false, message: "Anexe o termo de adoção (PDF ou imagem)." };
+  }
+  if (!/^https?:\/\//i.test(anexoUrl)) {
+    return { ok: false, message: "Anexo inválido. Reenvie o arquivo." };
+  }
+
+  const supabase = await createClient();
+  const sessao = await requireAdocaoSession(supabase);
+  if (!sessao.ok) return { ok: false, message: sessao.message };
+
+  // Só preenche adoções ainda sem termo (não sobrescreve um termo existente).
+  const { data: atualizadas, error: updateError } = await supabase
+    .from("adocao")
+    .update({ termo_adocao: anexoUrl })
+    .eq("id_animal", idNum)
+    .is("termo_adocao", null)
+    .select("id_operacao");
+
+  if (updateError) {
+    return { ok: false, message: normalizeDbErrorMessage(updateError) };
+  }
+  if (!atualizadas?.length) {
+    return { ok: false, message: "Esta adoção já possui termo ou não foi encontrada." };
+  }
+
+  revalidateAdocaoPaths(idNum);
+  return { ok: true, message: "Termo de adoção anexado." };
+}
+
 export async function cadastrarAdocao(prevOrFormData, maybeFormData) {
   const formData = resolveFormData(prevOrFormData, maybeFormData);
   if (!formData) {
@@ -75,11 +119,8 @@ export async function cadastrarAdocao(prevOrFormData, maybeFormData) {
     return { ok: false, message: "Anexo inválido. Reenvie o arquivo." };
   }
 
-  if (!anexoUrl) {
-    return { ok: false, message: "Anexe o termo de adoção (PDF ou imagem)." };
-  }
-
-  const termo_adocao = anexoUrl;
+  // Termo é opcional: sem anexo, a adoção fica "Aguardando termo de adoção".
+  const termo_adocao = anexoUrl || null;
 
   const supabase = await createClient();
   const sessao = await requireAdocaoSession(supabase);
@@ -109,5 +150,10 @@ export async function cadastrarAdocao(prevOrFormData, maybeFormData) {
   }
 
   revalidateAdocaoPaths(idNum);
-  return { ok: true, message: "Adoção cadastrada e animal marcado como adotado." };
+  return {
+    ok: true,
+    message: termo_adocao
+      ? "Adoção cadastrada e animal marcado como adotado."
+      : "Adoção cadastrada e animal marcado como adotado. Aguardando termo de adoção.",
+  };
 }
