@@ -1,4 +1,4 @@
-# De Match — Sistema de gestão de canil (ONG)
+# GAPA — Sistema de gestão de canil (ONG)
 
 Aplicação web para apoiar uma ONG no **cadastro e acompanhamento de animais**, **controle de adoções**, **perfis de equipe** e **painéis operacionais** (notificações e métricas). Desenvolvido no contexto acadêmico (IFRS — Colli's group corporation).
 
@@ -73,26 +73,27 @@ Regras detalhadas estão no banco (RLS) e em `src/lib/permissions.js` / `src/lib
 
 - Lista resumida dos animais mais recentes.
 - **Notificações:** animais cadastrados nos últimos 3 dias; alertas de cadastro incompleto (campos obrigatórios para ficha completa).
-- **Métricas de adoção** (admin e validador): total geral, por ano e por mês do ano corrente.
+- **Métricas de adoção** (admin e validador): total geral, por ano e por mês do ano corrente. Conforme as configurações do sistema, contam todas as adoções ou só as com termo anexado.
 - Atalhos laterais conforme o perfil.
 
 ### Animais (`/animais`)
 
 - Listagem com filtros visuais de disponibilidade.
-- **Cadastro** (`/animais/cadastro`): nome, foto (Storage), sexo, porte, castração, situação, data de nascimento, raça, localização, vacinação, história e observações.
+- **Cadastro** (`/animais/cadastro`): nome, foto (Storage), sexo, porte, castração, situação, data de nascimento, raça, localização, vacinação, história e observações. Com a situação "Adotado", admin e validador preenchem também a data e o termo da adoção.
 - **Ficha** (`/animais/[id]`): visualização completa; termo de adoção (admin/validador, se adotado).
 - **Edição** (`/animais/[id]/editar`): mesmos campos do cadastro.
-- **Exclusão:** somente administrador.
+- **Exclusão:** somente administrador; exclui também a adoção do animal e o arquivo do termo.
 
 ### Adoções (admin e validador)
 
-- **Cadastrar adoção** (`/adocoes/cadastro`): animal, data em que a adoção ocorreu e termo opcional (PDF/imagem no bucket `adocao-termos`); marca o animal como adotado. Sem termo, a ficha exibe "Aguardando termo de adoção".
+- A adoção é registrada no cadastro/edição do animal ao escolher a situação **Adotado**: data em que a adoção ocorreu e termo (PDF/imagem no bucket `adocao-termos`), obrigatório ou não conforme as configurações. Sem termo, a ficha exibe "Aguardando termo de adoção" e permite anexá-lo depois. Admin e validador podem excluir o termo pela ficha.
 
 ### Administração de usuários (admin)
 
 - **Criar usuário** (`/admin/usuarios/cadastro`) — exige `SUPABASE_SERVICE_ROLE_KEY` no servidor.
 - **Gerenciar usuários** (`/admin/usuarios/gerenciar`): listar, filtrar por perfil, editar perfil e nome.
 - **Perfil do usuário** (`/admin/usuarios/[id]`): detalhes e ações administrativas.
+- **Configurações do sistema** (`/admin/configuracoes`): nome da ONG exibido na barra de navegação ("GAPA - [nome da ONG]"); define se as métricas de adoção contam só adoções com termo e se o termo de adoção é obrigatório.
 
 ---
 
@@ -146,6 +147,8 @@ Scripts auxiliares (se necessário):
 
 - `corrigir_trigger_primeiro_admin.sql` — erro ao definir primeiro admin.
 - `adocao_termo_opcional.sql` — bancos já criados: permite cadastrar adoção sem termo (`termo_adocao` aceita NULL).
+- `adocao_exclusao_cascata.sql` — bancos já criados: excluir um animal exclui também a sua adoção.
+- `configuracao_sistema.sql` — bancos já criados: tabela de configurações do sistema (`/admin/configuracoes`).
 - `atualizar_rls_animal_voluntario.sql` — banco antigo sem permissão de voluntário em `animal`.
 
 ### 4. Primeiro administrador
@@ -178,7 +181,7 @@ npm run start
 
 ### Termos de adoção — bucket `adocao-termos`
 
-- Termo anexado no cadastro de adoção; URL gravada em `adocao.termo_adocao`.
+- Termo anexado no cadastro/edição do animal ou na ficha; URL gravada em `adocao.termo_adocao`.
 
 Sem login válido e buckets configurados, upload falha — confira RLS e `.env` na mesma origem do app.
 

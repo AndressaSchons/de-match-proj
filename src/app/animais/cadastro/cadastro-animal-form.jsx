@@ -9,7 +9,7 @@ import styles from "./cadastro-animal-form.module.css";
 
 const initialState = { ok: undefined, message: "" };
 
-export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = true }) {
+export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = true, termoObrigatorio = false }) {
   const [state, formAction, pending] = useActionState(cadastrarAnimal, initialState);
   const formRef  = useRef(null);
   const router   = useRouter();
@@ -21,6 +21,8 @@ export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = t
   const onPhotoUploadingChange = useCallback((isUploading) => {
     setPhotoUploading(isUploading);
   }, []);
+  const [termoUploading, setTermoUploading] = useState(false);
+  const onTermoUploadingChange = useCallback((v) => setTermoUploading(v), []);
 
   useEffect(() => {
     if (state?.ok) {
@@ -31,10 +33,11 @@ export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = t
     }
   }, [state?.ok]);
 
-  const canSave = !pending && !photoUploading;
+  const canSave = !pending && !photoUploading && !termoUploading;
 
   function getSaveLabel() {
     if (photoUploading) return "Aguardando fotos…";
+    if (termoUploading) return "Aguardando arquivo…";
     if (pending)        return "Salvando…";
     return "Salvar";
   }
@@ -54,6 +57,9 @@ export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = t
           <AnimalFormFields
             key={formKey}
             onPhotoUploadingChange={onPhotoUploadingChange}
+            podeAdocao={podeAdocao}
+            termoObrigatorio={termoObrigatorio}
+            onTermoUploadingChange={onTermoUploadingChange}
           />
 
           <div className={styles.actions}>
@@ -64,7 +70,7 @@ export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = t
               type="submit"
               disabled={!canSave}
               className={styles.btnSave}
-              title={photoUploading ? "Aguarde o envio das fotos antes de salvar" : undefined}
+              title={photoUploading || termoUploading ? "Aguarde o envio dos arquivos antes de salvar" : undefined}
             >
               {getSaveLabel()}
             </button>
@@ -79,7 +85,7 @@ export function CadastroAnimalForm({ isAdmin = false, podeAdocao, podeAnimal = t
 
         </form>
 
-        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );

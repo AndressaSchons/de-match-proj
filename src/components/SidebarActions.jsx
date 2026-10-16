@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaPaw, FaFileCirclePlus, FaUserPlus, FaUsers } from "react-icons/fa6";
+import { FaPaw, FaUserPlus, FaUsers, FaGear } from "react-icons/fa6";
 import styles from "./SidebarActions.module.css";
 
 const BUTTONS = /** @type {const} */ ([
@@ -11,13 +11,6 @@ const BUTTONS = /** @type {const} */ ([
     label: "Adicionar\nPet",
     Icon: FaPaw,
     href: "/animais/cadastro",
-    color: "green",
-  },
-  {
-    scope: "adocao",
-    label: "Cadastrar\nadoção",
-    Icon: FaFileCirclePlus,
-    href: "/adocoes/cadastro",
     color: "green",
   },
   {
@@ -34,6 +27,13 @@ const BUTTONS = /** @type {const} */ ([
     href: "/admin/usuarios/gerenciar",
     color: "green",
   },
+  {
+    scope: "admin",
+    label: "Configurações",
+    Icon: FaGear,
+    href: "/admin/configuracoes",
+    color: "green",
+  },
 ]);
 
 function isPetFlowPathname(pathname) {
@@ -44,24 +44,20 @@ function isPetFlowPathname(pathname) {
 /**
  * Barra lateral de atalhos. Escopos:
  * - `pet`: cadastro de animal — exige `podeAnimal`
- * - `adocao`: cadastro de adoção — exige `podeAdocao` (administrador ou validador)
  * - `admin`: rotas sob `/admin` — exige `isAdmin`
  *
  * @param {object} props
  * @param {boolean} [props.podeAnimal=true] — perfis que podem cadastrar animal
- * @param {boolean} [props.podeAdocao] — perfis que podem cadastrar adoção (padrão: mesmo valor de `isAdmin`)
  * @param {boolean} [props.isAdmin=false] — administrador (usuários / futuras rotas admin na barra)
  */
-export function SidebarActions({ podeAnimal = true, podeAdocao, isAdmin = false }) {
+export function SidebarActions({ podeAnimal = true, isAdmin = false }) {
   const pathname = usePathname();
   const petFlow = isPetFlowPathname(pathname);
-  const podeAdocaoResolved = podeAdocao ?? isAdmin;
 
   return (
     <aside className={styles.sidebar}>
       {BUTTONS.map(({ scope, label, Icon, href, color }) => {
         if (scope === "pet" && !podeAnimal) return null;
-        if (scope === "adocao" && !podeAdocaoResolved) return null;
         if (scope === "admin" && !isAdmin) return null;
 
         const isActive = href === "/animais/cadastro" ? petFlow : pathname === href;

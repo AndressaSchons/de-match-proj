@@ -10,12 +10,13 @@ import styles from "./home-view.module.css";
 export default function HomeView({
   animais,
   podeAnimal,
-  podeAdocao,
   isAdmin,
   metricas = null,
   notificacoesNovos = [],
   notificacoesIncompletos = [],
 }) {
+  const semNotificacoes = notificacoesNovos.length === 0 && notificacoesIncompletos.length === 0;
+
   return (
     <div className="pageLayout">
       <div className="pageBody" data-page-body>
@@ -24,7 +25,10 @@ export default function HomeView({
         <aside className={styles.leftPanel}>
           <div className={styles.panelBox}>
             <h2 className={styles.panelTitle}>Notificações</h2>
-            {notificacoesNovos.length === 0 ? (
+            {semNotificacoes ? (
+              <p className={styles.notifEmpty}>Tudo em ordem</p>
+            ) : null}
+            {semNotificacoes ? null : notificacoesNovos.length === 0 ? (
               <p className={styles.notifEmpty}>Nenhum animal novo nos últimos 3 dias.</p>
             ) : (
               notificacoesNovos.map((n) => (
@@ -36,7 +40,7 @@ export default function HomeView({
                 />
               ))
             )}
-            {notificacoesIncompletos.length === 0 ? (
+            {semNotificacoes ? null : notificacoesIncompletos.length === 0 ? (
               <p className={styles.notifEmpty}>Nenhum cadastro incompleto.</p>
             ) : (
               notificacoesIncompletos.map((n) => (
@@ -53,6 +57,9 @@ export default function HomeView({
           {metricas != null ? (
             <div className={`${styles.panelBox} ${styles.metricsBox}`}>
               <h2 className={styles.panelTitle}>Métricas</h2>
+              {metricas.somenteComTermo ? (
+                <p className={styles.notifEmpty}>Considerando apenas adoções com termo anexado.</p>
+              ) : null}
               <MetricsCard
                 totalGeral={metricas.totalGeral}
                 anoReferencia={metricas.anoReferencia}
@@ -86,7 +93,7 @@ export default function HomeView({
         </main>
 
         {/* ── Direita: Ações — sem active, nenhum botão destacado ── */}
-        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );

@@ -150,7 +150,7 @@ export const AnimalPhotoUpload = forwardRef(function AnimalPhotoUpload({ initial
       {vazio ? (
         <div className={`${styles.dropzone} ${dragOver ? styles.dragOver : ""}`} {...dropHandlers}>
           <p className={styles.hint}>
-            Arraste imagens ou escolha arquivos (JPG, PNG ou WebP, até 5 MB cada; máx. {MAX_FOTOS} fotos).
+            Arraste imagens aqui (JPG, PNG ou WebP, até 5 MB; máx. {MAX_FOTOS} fotos).
           </p>
           <button
             type="button"

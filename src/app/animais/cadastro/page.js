@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
 import { isAdministrador, podeCadastrarAdocao } from "@/lib/permissions";
+import { carregarConfiguracaoSistema } from "@/lib/configuracao-sistema";
 import { CadastroAnimalForm } from "./cadastro-animal-form";
 
 export const metadata = {
@@ -24,11 +25,14 @@ export default async function CadastroAnimalPage() {
     redirect("/");
   }
 
+  const { termo_obrigatorio } = await carregarConfiguracaoSistema(supabase);
+
   return (
     <CadastroAnimalForm
       isAdmin={isAdministrador(perfil?.perfil_acesso)}
       podeAdocao={podeCadastrarAdocao(perfil?.perfil_acesso)}
       podeAnimal
+      termoObrigatorio={termo_obrigatorio}
     />
   );
 }

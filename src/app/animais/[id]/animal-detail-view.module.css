@@ -33,6 +33,9 @@
 
 /* ── Buttons ─────────────────────────────────── */
 .btnGhost {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
   padding: 6px 16px;
   border-radius: var(--radius-pill);
   border: 1px solid rgba(0, 0, 0, 0.18);
@@ -221,6 +224,21 @@ button.btnPrimary:disabled { opacity: 0.6; cursor: not-allowed; }
   text-decoration: none;
 }
 .termLinks a:hover { text-decoration: underline; }
+
+.termDeleteBtn {
+  margin-left: auto;
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.termDeleteBtn:hover { background: #fee2e2; }
+.termDeleteBtn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .termPending {
   display: inline-flex;

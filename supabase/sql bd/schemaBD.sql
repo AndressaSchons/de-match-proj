@@ -123,7 +123,7 @@ CREATE TABLE public.adocao (
   data_adocao date,                                  
   termo_adocao text, -- NULL = aguardando termo de adoção
   id_usuario uuid NOT NULL REFERENCES auth.users (id) ON DELETE RESTRICT,
-  id_animal bigint NOT NULL REFERENCES public.animal (id_animal) ON DELETE RESTRICT,
+  id_animal bigint NOT NULL REFERENCES public.animal (id_animal) ON DELETE CASCADE,
   UNIQUE (id_animal)
 );
 
@@ -250,5 +250,40 @@ CREATE POLICY evento_apagar_equipe
     EXISTS (
       SELECT 1 FROM public.perfil p
       WHERE p.id = auth.uid() AND p.perfil_acesso IN ('administrador', 'validador')
+    )
+  );
+
+-- ---------------------------------------------------------------------------
+-- Configurações do sistema (linha única, id = 1)
+-- ---------------------------------------------------------------------------
+CREATE TABLE public.configuracao_sistema (
+  id smallint PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  metricas_somente_com_termo boolean NOT NULL DEFAULT false,
+  termo_obrigatorio boolean NOT NULL DEFAULT false,
+  nome_ong text NOT NULL DEFAULT '',
+  data_atualizacao timestamptz NOT NULL DEFAULT NOW(),
+  id_usuario_atualizacao uuid REFERENCES auth.users (id) ON DELETE SET NULL
+);
+
+INSERT INTO public.configuracao_sistema (id) VALUES (1);
+
+ALTER TABLE public.configuracao_sistema ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY configuracao_ler_autenticado
+  ON public.configuracao_sistema FOR SELECT TO authenticated
+  USING (true);
+
+CREATE POLICY configuracao_atualizar_admin
+  ON public.configuracao_sistema FOR UPDATE TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.perfil p
+      WHERE p.id = auth.uid() AND p.perfil_acesso = 'administrador'
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.perfil p
+      WHERE p.id = auth.uid() AND p.perfil_acesso = 'administrador'
     )
   );

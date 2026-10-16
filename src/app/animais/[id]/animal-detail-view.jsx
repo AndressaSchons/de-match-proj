@@ -2,8 +2,7 @@
 
 import { useActionState, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { excluirAnimal } from "../actions";
+import { excluirAnimal, excluirTermoAdocao } from "../actions";
 import { normalizarFotos } from "../animal-map";
 import { DISPONIBILIDADE } from "@/lib/animal-constants";
 import { SidebarActions } from "@/components/SidebarActions";
@@ -17,15 +16,24 @@ function labelDisponibilidade(value) {
 }
 
 export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, podeAdocao, isAdmin, termoAdocaoUrl, dataAdocao, aguardandoTermo = false }) {
-  const router = useRouter();
   const [delState, delAction, delPending] = useActionState(excluirAnimal, initialState);
+  const [termoDelState, termoDelAction, termoDelPending] = useActionState(excluirTermoAdocao, initialState);
 
   const fotos = useMemo(() => normalizarFotos(animal), [animal]);
   const [fotoAtiva, setFotoAtiva] = useState(0);
   const fotoPrincipal = fotos[fotoAtiva] ?? fotos[0] ?? null;
 
   function confirmDelete(e) {
-    if (!confirm("Excluir este animal permanentemente?")) {
+    const aviso = animal.disponibilidade === "adotado"
+      ? "Excluir este animal permanentemente? A adoção e o termo de adoção também serão excluídos."
+      : "Excluir este animal permanentemente?";
+    if (!confirm(aviso)) {
+      e.preventDefault();
+    }
+  }
+
+  function confirmDeleteTermo(e) {
+    if (!confirm("Excluir o termo de adoção? A adoção ficará aguardando um novo termo.")) {
       e.preventDefault();
     }
   }
@@ -37,9 +45,9 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
 
           {/* ── Toolbar ───────────────────────────────── */}
           <div className={styles.toolbar}>
-            <button type="button" onClick={() => router.back()} className={styles.btnGhost}>
+            <Link href="/" className={styles.btnGhost}>
               ← Voltar
-            </button>
+            </Link>
             <div className={styles.toolbarActions}>
               {podeEditar ? (
                 <Link href={`/animais/${animal.id_animal}/editar`} className={styles.btnPrimary}>
@@ -151,6 +159,14 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
                     <a href={termoAdocaoUrl} target="_blank" rel="noreferrer">Visualizar termo</a>
                     <a href={termoAdocaoUrl} download>Baixar</a>
                   </span>
+                  {podeAdocao ? (
+                    <form action={termoDelAction} className={styles.inlineForm} onSubmit={confirmDeleteTermo}>
+                      <input type="hidden" name="id_animal" value={String(animal.id_animal)} />
+                      <button type="submit" disabled={termoDelPending} className={styles.termDeleteBtn}>
+                        {termoDelPending ? "Excluindo…" : "Excluir termo"}
+                      </button>
+                    </form>
+                  ) : null}
                 </dd>
               ) : aguardandoTermo ? (
                 <dd className={styles.termRow}>
@@ -162,6 +178,12 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
               ) : null}
             </dl>
           </div>
+
+          {termoDelState?.message ? (
+            <p className={termoDelState.ok ? styles.msgOk : styles.msgError} role="status">
+              {termoDelState.message}
+            </p>
+          ) : null}
 
           {/* ── Anexar termo pendente ─────────────────── */}
           {aguardandoTermo && podeAdocao ? <AnexarTermoForm idAnimal={animal.id_animal} /> : null}
@@ -191,7 +213,7 @@ export function AnimalDetailView({ animal, podeEditar, podeExcluir, podeAnimal, 
 
         </main>
 
-        <SidebarActions podeAnimal={podeAnimal} podeAdocao={podeAdocao} isAdmin={isAdmin} />
+        <SidebarActions podeAnimal={podeAnimal} isAdmin={isAdmin} />
       </div>
     </div>
   );

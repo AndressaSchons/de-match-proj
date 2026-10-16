@@ -87,11 +87,20 @@ export function validateAnimalRow(row, { requireNome = true } = {}) {
     return { ok: false, message: "Selecione uma disponibilidade válida." };
   }
 
-  if (row.sexo != null && row.sexo !== "" && !SEXO_VALUES.includes(/** @type {*} */ (row.sexo))) {
+  if (!row.sexo) {
+    return { ok: false, message: "Informe o sexo do animal." };
+  }
+  if (!SEXO_VALUES.includes(/** @type {*} */ (row.sexo))) {
     return { ok: false, message: "Sexo inválido." };
   }
-  if (row.porte != null && row.porte !== "" && !PORTE_VALUES.includes(/** @type {*} */ (row.porte))) {
+  if (!row.porte) {
+    return { ok: false, message: "Informe o porte do animal." };
+  }
+  if (!PORTE_VALUES.includes(/** @type {*} */ (row.porte))) {
     return { ok: false, message: "Porte inválido." };
+  }
+  if (!row.raca) {
+    return { ok: false, message: "Informe a cor/raça do animal." };
   }
 
   return { ok: true };

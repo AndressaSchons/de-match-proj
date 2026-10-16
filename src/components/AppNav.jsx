@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { signOutAction } from "@/app/actions";
-import { FaHouse, FaCircleUser, FaRightFromBracket, FaUsersGear } from "react-icons/fa6";
+import { FaHouse, FaCircleUser, FaRightFromBracket, FaUsersGear, FaGear } from "react-icons/fa6";
 import { isAdministrador } from "@/lib/permissions";
+import { carregarConfiguracaoSistema, tituloSistema } from "@/lib/configuracao-sistema";
 import styles from "./AppNav.module.css";
 
 export async function AppNav() {
@@ -18,10 +19,12 @@ export async function AppNav() {
     .maybeSingle();
 
   const showAdminNav = isAdministrador(perfilNav?.perfil_acesso);
+  const { nome_ong } = await carregarConfiguracaoSistema(supabase);
+  const titulo = tituloSistema(nome_ong);
 
   return (
     <header className={styles.header}>
-      <Link href="/" className={styles.title}>ONG</Link>
+      <Link href="/" className={styles.title} title={titulo}>{titulo}</Link>
 
       <nav className={styles.icons}>
         <Link href="/" className={styles.icon} title="Início"><FaHouse /></Link>
@@ -32,6 +35,11 @@ export async function AppNav() {
             title="Administração"
           >
             <FaUsersGear />
+          </Link>
+        ) : null}
+        {showAdminNav ? (
+          <Link href="/admin/configuracoes" className={styles.icon} title="Configurações do sistema">
+            <FaGear />
           </Link>
         ) : null}
         <Link href="/conta" className={styles.icon} title="Perfil"><FaCircleUser /></Link>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useCallback, useState } from "react";
-import { anexarTermoAdocao } from "@/app/adocoes/cadastro/actions";
+import { anexarTermoAdocao } from "../actions";
 import { AdocaoTermoUpload } from "@/components/AdocaoTermoUpload";
 import styles from "./animal-detail-view.module.css";
 

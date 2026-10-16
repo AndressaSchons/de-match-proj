@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server";
 import { podeCadastrarAnimal } from "@/lib/animal-constants";
 import { isAdministrador, podeCadastrarAdocao } from "@/lib/permissions";
 import { animalRowToFormDefaults } from "../../animal-map";
+import { carregarConfiguracaoSistema } from "@/lib/configuracao-sistema";
 import { EditarAnimalForm } from "./editar-animal-form";
 
 export const metadata = {
@@ -36,13 +37,33 @@ export default async function EditarAnimalPage({ params }) {
 
   const defaultValues = animalRowToFormDefaults(animal);
 
+  // Seção "Adoção" do formulário: só para quem pode registrar adoções.
+  const podeAdocao = podeCadastrarAdocao(perfil?.perfil_acesso);
+  let adocaoDefaults = null;
+  if (podeAdocao) {
+    const { data: adocao } = await supabase
+      .from("adocao")
+      .select("data_adocao, termo_adocao")
+      .eq("id_animal", idNum)
+      .maybeSingle();
+    if (adocao) {
+      adocaoDefaults = {
+        data_adocao: adocao.data_adocao ? String(adocao.data_adocao).slice(0, 10) : null,
+        termo_adocao: adocao.termo_adocao ?? null,
+      };
+    }
+  }
+  const { termo_obrigatorio } = await carregarConfiguracaoSistema(supabase);
+
   return (
     <EditarAnimalForm
       idAnimal={idNum}
       defaultValues={defaultValues}
       isAdmin={isAdministrador(perfil?.perfil_acesso)}
-      podeAdocao={podeCadastrarAdocao(perfil?.perfil_acesso)}
+      podeAdocao={podeAdocao}
       podeAnimal
+      termoObrigatorio={termo_obrigatorio}
+      adocaoDefaults={adocaoDefaults}
     />
   );
 }

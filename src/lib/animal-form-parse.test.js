@@ -16,8 +16,19 @@ describe("validateAnimalRow", () => {
   });
 
   it("aceita cadastro mínimo válido", () => {
-    const row = { nome_animal: "Thor", disponibilidade: "disponivel", sexo: null, porte: null };
+    const row = { nome_animal: "Thor", disponibilidade: "disponivel", sexo: "macho", porte: "medio", raca: "Caramelo" };
     expect(validateAnimalRow(row).ok).toBe(true);
+  });
+
+  it.each([
+    ["sexo", /sexo/i],
+    ["porte", /porte/i],
+    ["raca", /raça/i],
+  ])("exige %s", (campo, mensagem) => {
+    const row = { nome_animal: "Thor", disponibilidade: "disponivel", sexo: "macho", porte: "medio", raca: "Caramelo" };
+    const r = validateAnimalRow({ ...row, [campo]: null });
+    expect(r.ok).toBe(false);
+    expect(r.message).toMatch(mensagem);
   });
 
   it("rejeita disponibilidade inválida", () => {

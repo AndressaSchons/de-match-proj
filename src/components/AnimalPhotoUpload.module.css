@@ -8,10 +8,15 @@
 
 /* ── Dropzone completo (galeria vazia) ── */
 .dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
   border: 2px dashed var(--color-border);
   border-radius: var(--radius-md);
-  padding: 0.75rem 1rem;
-  text-align: center;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
   background: #f8f9fb;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
@@ -23,13 +28,16 @@
 .dropzone:focus { outline: 2px solid var(--color-green); outline-offset: 2px; }
 
 .hint {
-  margin: 0 0 0.4rem;
-  font-size: 0.78rem;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.75rem;
   color: var(--color-muted);
 }
 
 .btnFile {
-  padding: 5px 14px;
+  flex-shrink: 0;
+  padding: 4px 12px;
   border-radius: var(--radius-pill);
   border: none;
   background: var(--color-green);

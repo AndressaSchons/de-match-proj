@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "de-match-proj",
-  description: "Base Next.js + Supabase Auth",
+  title: { default: "GAPA", template: "%s – GAPA" },
+  description: "GAPA — gestão de animais e adoções",
 };
 
 export const viewport = {

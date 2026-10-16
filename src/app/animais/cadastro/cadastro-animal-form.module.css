@@ -317,3 +317,33 @@
   transform: none !important;
   filter: none !important;
 }
+/* ── Seção de adoção (situação "adotado") ── */
+.adocaoSection {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem 1rem;
+  border: 1.5px solid #bbf7d0;
+  border-radius: var(--radius-md);
+  background: #f0fdf4;
+}
+.adocaoSection .sectionDivider { margin-top: 0; color: #15803d; border-bottom-color: #bbf7d0; }
+
+.adocaoHint {
+  font-size: var(--font-size-sm);
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── Campos obrigatórios ── */
+.required {
+  color: #b91c1c;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.requiredLegend {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+.requiredLegend .required { margin-left: 0; }

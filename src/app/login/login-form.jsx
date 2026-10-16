@@ -17,7 +17,7 @@ function safeRedirectPath(next) {
 function Logo() {
   return (
     <div className={styles.logoWrap}>
-      <img src="/logo.png" alt="De Match Logo" className={styles.logoImg} />
+      <img src="/logo.png" alt="GAPA" className={styles.logoImg} />
     </div>
   );
 }

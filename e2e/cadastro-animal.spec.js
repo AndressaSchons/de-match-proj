@@ -14,7 +14,10 @@ test.describe("Cadastro de animal", () => {
     await page.goto("/animais/cadastro");
 
     await page.locator('input[name="nome_animal"]').fill(nome);
+    await page.locator('input[name="sexo"][value="femea"]').check();
+    await page.locator('select[name="porte"]').selectOption("medio");
     await page.locator('select[name="disponibilidade"]').selectOption("disponivel");
+    await page.locator('input[name="raca"]').fill("SRD");
     await page.getByRole("button", { name: "Salvar" }).click();
 
     await expect(page.getByRole("status")).toContainText(/sucesso/i, { timeout: 15_000 });
